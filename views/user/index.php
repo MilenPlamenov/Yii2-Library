@@ -32,7 +32,10 @@ $this->title = 'Users';
             'last_name',
             'email',
             'address',
-            'telephone_number',
+            [
+                    'attribute' => 'telephone_number',
+                    'label' => 'Number',
+            ],
             [
                 'class' => ActionColumn::className(),
                 'template' => '{update} {view}',
@@ -40,6 +43,16 @@ $this->title = 'Users';
                 'urlCreator' => function ($action, User $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  },
+            ],
+            [
+                'label' => 'Taken Books',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::a(Html::encode('Check out'),
+                        ['user/currently-taken-books', 'id' => $data['id']]);
+                },
+                'contentOptions' => ['style' => 'width: 11.7%'],
+
             ],
         ],
         'summary' => '',
