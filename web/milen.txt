@@ -1,0 +1,8 @@
+
+
+
+
+{"_csrf":"nh5ADraQ1D_FAMokysHke5D1gPumkVHnm5T7_M4fKYvpbXBC8f6YV5NhiW6miqMu5YO3lcOhOp711c3Mt1Zl2g==","TakenBooks":{"return_amount":"4"}}
+{"_csrf":"r-KqtXTaoJfb2r6am44TvUM0zaL_koySqm-FUmWjN6rYkZr5M7Ts_427_dD3xVToNkL6zJqi5-vELrNiHOp7-w==","TakenBooks":{"return_amount":"3"}}
+{"return_amount":"4"}
+"4"

@@ -23,6 +23,8 @@ use Yii;
  */
 class TakenBooks extends \yii\db\ActiveRecord
 {
+    public $return_amount;
+
     /**
      * {@inheritdoc}
      */
@@ -39,7 +41,7 @@ class TakenBooks extends \yii\db\ActiveRecord
         return [
             [['user_id', 'book_id', 'booked_books_id', 'amount', 'returned'], 'integer'],
             [['amount'], 'required'],
-            [['taken_date', 'returned_date', 'date_for_return'], 'safe'],
+            [['taken_date', 'returned_date', 'date_for_return', 'return_amount'], 'safe'],
             [['booked_books_id'], 'unique'],
             [['book_id'], 'exist', 'skipOnError' => true, 'targetClass' => Book::class, 'targetAttribute' => ['book_id' => 'id']],
             [['booked_books_id'], 'exist', 'skipOnError' => true, 'targetClass' => BookedBooks::class, 'targetAttribute' => ['booked_books_id' => 'id']],

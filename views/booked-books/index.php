@@ -21,7 +21,7 @@ $this->title = 'Booked Books';
 
     <?= GridView::widget([
         'tableOptions' => [
-            'class' => 'table table-striped text-center',
+            'class' => 'table table-striped text-center table-bordered',
         ],
         'options' => [
             'class' => 'table-responsive',

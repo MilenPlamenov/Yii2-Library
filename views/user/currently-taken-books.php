@@ -16,7 +16,7 @@ $this->title = 'Currently taken books for ' . $user->email;
     <h3>*Note that all delay columns will be in <span class="text-danger">red color</span></h3>
     <?= GridView::widget([
         'tableOptions' => [
-            'class' => 'table table-striped text-center',
+            'class' => 'table table-striped text-center table-bordered',
         ],
         'options' => [
             'class' => 'table-responsive',
@@ -54,10 +54,19 @@ $this->title = 'Currently taken books for ' . $user->email;
             ],
             'date_for_return',
             [
-                'label' => 'Return',
+                'label' => 'Return Part Of The Books',
                 'format' => 'raw',
                 'value' => function ($data) {
                     return Html::a(Html::encode('Return '. $data['book']['title']),
+                        ['taken-books/part-time-return', 'taking_id' => $data['taking_id']]);
+                },
+                'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
+            ],
+            [
+                'label' => 'Return All Books',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::a(Html::encode('Return all '. $data['book']['title']),
                         ['taken-books/return', 'taking_id' => $data['taking_id']], ['data' => [
                             'method' => 'post',
                             'confirm' => 'Are you sure you want to return the books?',

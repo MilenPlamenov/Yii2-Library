@@ -89,15 +89,24 @@ class TakenBooksController extends Controller
         ]);
     }
 
-    public function actionReturn($taking_id) {
-        $model = $this->findModel($taking_id);
+    public function returnAllBooks($model)
+    {
         $model->returned = 1;
         $model->returned_date = date('Y-m-d H:i:s');
         $model->book->available_books += $model->amount;
+    }
+
+    public function returnPartOfBooks($model, $update_amount) {
+        $model->book->available_books += $update_amount;
+        $model->amount -= $update_amount;
+    }
+
+    public function actionReturn($taking_id)
+    {
+        $model = $this->findModel($taking_id);
+        $this->returnAllBooks($model);
         if ($model->book->save() && $model->save()) {
             return $this->redirect(['taken-books/index']);
-        } else {
-            throw new BadRequestHttpException('Something went wrong');
         }
     }
 
@@ -128,21 +137,26 @@ class TakenBooksController extends Controller
     }
 
     /**
-     * Updates an existing TakenBooks model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $taking_id Taking ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
-    public function actionUpdate($taking_id)
-    {
+    public function actionPartTimeReturn($taking_id) {
         $model = $this->findModel($taking_id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'taking_id' => $model->taking_id]);
+        if ($this->request->isPost) {
+            $update_amount = Yii::$app->request->post()['TakenBooks']['return_amount'];
+            if ($update_amount >= $model->amount) {
+                $this->returnAllBooks($model);
+            } else {
+                $this->returnPartOfBooks($model, $update_amount);
+            }
+            if ($model->book->save() && $model->save()) {
+                return $this->redirect(['taken-books/index']);
+            } else {
+                throw new BadRequestHttpException('Something went wrong');
+            }
         }
 
-        return $this->render('update', [
+        return $this->render('part-time-return', [
             'model' => $model,
         ]);
     }
