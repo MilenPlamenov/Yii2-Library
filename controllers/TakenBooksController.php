@@ -108,7 +108,8 @@ class TakenBooksController extends Controller
         $model = $this->findModel($taking_id);
         $this->returnAllBooks($model);
         if ($model->book->save() && $model->save()) {
-            return $this->redirect(['taken-books/index']);
+            Yii::$app->session->setFlash('success', "Successful operation!");
+            return $this->redirect(['user/currently-taken-books', 'id' => $model->user_id]);
         }
     }
 
@@ -152,7 +153,9 @@ class TakenBooksController extends Controller
                 $this->returnPartOfBooks($model, $update_amount);
             }
             if ($model->book->save() && $model->save()) {
-                return $this->redirect(['taken-books/index']);
+                Yii::$app->session->setFlash('Successful operation', "success");
+
+                return $this->redirect(['user/currently-taken-books', 'id' => $model->user_id]);
             } else {
                 Yii::$app->session->setFlash('error', "Something went wrong!");
             }

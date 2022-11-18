@@ -94,6 +94,9 @@ class BookedBooksController extends Controller
                     $model->book->available_books -= $model->amount;
                     $model->book->save();
                     $model->save();
+                    Yii::$app->session->setFlash('success', 'Thank you for booking ' . $model->book->title .
+                        ' .Make sure you visit the library till one day to take your books :)');
+
                     return $this->redirect(['index']);
                 } else {
                     Yii::$app->session->setFlash('error', "Invalid data!");

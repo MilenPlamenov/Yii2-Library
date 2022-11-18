@@ -53,6 +53,7 @@ class BookedBooksSearch extends BookedBooks
         ]);
 
         $dataProvider->setSort([
+            'defaultOrder' => ['booked_date'=>SORT_DESC],
             'attributes' => [
                 'email',
                 'title',

@@ -66,15 +66,15 @@ $this->title = 'Taken Books History';
                 'label' => 'Date For Return',
                 'attribute' => 'date_for_return',
             ],
-            [
-                'class' => ActionColumn::className(),
-                'template' => '{update} {delete}',
-                'contentOptions' => ['style' => 'width: 8.7%'],
-                'urlCreator' => function ($action, TakenBooks $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'taking_id' => $model->taking_id]);
-                },
-                'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
-            ],
+//            [
+//                'class' => ActionColumn::className(),
+//                'template' => '{update} {delete}',
+//                'contentOptions' => ['style' => 'width: 8.7%'],
+//                'urlCreator' => function ($action, TakenBooks $model, $key, $index, $column) {
+//                    return Url::toRoute([$action, 'taking_id' => $model->taking_id]);
+//                },
+//                'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
+//            ],
         ],
         'summary' => '',
     ]); ?>
