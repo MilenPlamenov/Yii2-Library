@@ -65,6 +65,7 @@ class TakenBooksSearch extends TakenBooks
 
 
         $dataProvider->setSort([
+            'defaultOrder' => ['taken_date'=>SORT_DESC],
             'attributes' => [
                 'taking_id',
                 'title',

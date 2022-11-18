@@ -23,6 +23,7 @@ $this->title = 'Taken Books History';
         'options' => [
             'class' => 'table-responsive',
         ],
+
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

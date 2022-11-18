@@ -42,7 +42,7 @@ $this->title = $model->title;
                         ?>
                     </p>
                 </div>
-                <p class="overflow-scroll w-100 h-25">Description: <?= $model->description ?></p>
+                <p class="w-100">Description: <?= $model->description ?></p>
                 <?= $model->available_books ? Html::a('Bookmark', ['booked-books/create', 'id' => $model->id],
                     ['class' => 'btn btn-outline-warning text-danger shadow']) : '';
                 ?>
