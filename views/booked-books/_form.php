@@ -12,6 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+
     <?= $form->field($model, 'amount')->textInput()->label('Enter wanted amount of books you want to book:') ?>
 
     <div class="mt-2">

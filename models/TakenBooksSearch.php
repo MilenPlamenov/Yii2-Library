@@ -75,6 +75,7 @@ class TakenBooksSearch extends TakenBooks
                 'amount',
                 'taken_date',
                 'returned',
+                'date_for_return',
                 'returned_date',
             ]
         ]);

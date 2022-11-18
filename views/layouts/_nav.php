@@ -18,7 +18,7 @@ echo Nav::widget([
             ['label' => 'Bookings', 'url' => ['booked-books/index']] : '',
 
         !Yii::$app->user->isGuest
-            ? ['label' => 'Takings', 'url' => ['taken-books/index']] : '',
+            ? ['label' => 'All Takings', 'url' => ['taken-books/index']] : '',
 
         Yii::$app->user->isGuest ?
             (['label' => 'Register', 'url' => ['/site/register']])

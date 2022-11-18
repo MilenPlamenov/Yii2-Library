@@ -20,7 +20,7 @@ $this->title = $model->title;
 
             <div class="col-md-4 col-lg-4">
                 <div class="small mb-1">ISBN: <?= $model->isbn ?></div>
-                <h1 class="display-5 fw-bolder"><?= $model->title ?></h1>
+                <h1 class="display-6 fw-bolder"><?= $model->title ?></h1>
                 <div class="fs-5 mb-5">
                     <span><i>Author: <?= $model->author ?></i></span>
                     <p><i>Posted on: <?= $model->post_year ?></i></p>

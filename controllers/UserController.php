@@ -139,7 +139,7 @@ class UserController extends Controller
                 $model->save();
                 return $this->redirect(['book/index']);
             } else {
-                throw new BadRequestHttpException("Incorrect password");
+                Yii::$app->session->setFlash('error', "Incorrect password!");
             }
         }
 

@@ -2,6 +2,7 @@
 /** @var app\models\Book $model */
 
 use yii\helpers\Html;
+use yii\helpers\StringHelper;
 
 ?>
 
@@ -15,7 +16,7 @@ use yii\helpers\Html;
             <strong><i>By <?= $model->author ?>. Published on: <?=$model->post_year?></i></strong>
             <p>In stock: <?= $model->available_books ?></p>
         </div>
-        <p class=""><?= $model->description?></p>
+        <p class=""><?= StringHelper::truncateWords($model->description, 20) ?></p>
         <div class="p-1">
             <?php
                 if(!Yii::$app->user->isGuest) {

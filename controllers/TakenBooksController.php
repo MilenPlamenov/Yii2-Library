@@ -6,11 +6,13 @@ use app\models\TakenBooks;
 use app\models\TakenBooksSearch;
 use DateTime;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * TakenBooksController implements the CRUD actions for TakenBooks model.
@@ -152,7 +154,7 @@ class TakenBooksController extends Controller
             if ($model->book->save() && $model->save()) {
                 return $this->redirect(['taken-books/index']);
             } else {
-                throw new BadRequestHttpException('Something went wrong');
+                Yii::$app->session->setFlash('error', "Something went wrong!");
             }
         }
 
@@ -165,8 +167,10 @@ class TakenBooksController extends Controller
      * Deletes an existing TakenBooks model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $taking_id Taking ID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($taking_id)
     {

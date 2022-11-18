@@ -90,15 +90,13 @@ class BookedBooksController extends Controller
         $model->book_id = Yii::$app->request->get('id');
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                if($model->amount > 0) {
-                    if($model->book->available_books >= $model->amount) {
-                        $model->book->available_books -= $model->amount;
-                        $model->book->save();
-                        $model->save();
-                        return $this->redirect(['index']);
-                    }
+                if ($model->amount > 0 && $model->book->available_books >= $model->amount) {
+                    $model->book->available_books -= $model->amount;
+                    $model->book->save();
+                    $model->save();
+                    return $this->redirect(['index']);
                 } else {
-                    throw new BadRequestHttpException("Wrong data provided!");
+                    Yii::$app->session->setFlash('error', "Invalid data!");
                 }
             }
         } else {
@@ -120,18 +118,18 @@ class BookedBooksController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if ($model->user->id == Yii::$app->user->identity->id or Yii::$app->user->identity->isAdminOrLibrarian()){
+        if ($model->user->id == Yii::$app->user->identity->id or Yii::$app->user->identity->isAdminOrLibrarian()) {
             $oldAmount = $model->amount;
 
             if ($this->request->isPost && $model->load($this->request->post())) {
                 $model->book->available_books += $oldAmount;
-                if ($model->book->available_books - $model->amount >= 0) {
-                    $model->book-> available_books -= $model->amount;
+                if ($model->book->available_books - $model->amount >= 0 && $model->amount > 0) {
+                    $model->book->available_books -= $model->amount;
                     $model->save();
                     $model->book->save();
                     return $this->redirect(['index']);
                 } else {
-                    throw new BadRequestHttpException('Please enter normal value');
+                    Yii::$app->session->setFlash('error', "Invalid data!");
                 }
             }
 
@@ -153,13 +151,13 @@ class BookedBooksController extends Controller
     {
 
         $model = $this->findModel($id);
-        if ($model->user->id == Yii::$app->user->identity->id or Yii::$app->user->identity->isAdminOrLibrarian()){
+        if ($model->user->id == Yii::$app->user->identity->id or Yii::$app->user->identity->isAdminOrLibrarian()) {
 
             $model->book->available_books += $model->amount;
-        $model->book->save();
-        $model->delete();
+            $model->book->save();
+            $model->delete();
 
-        return $this->redirect(['index']);
+            return $this->redirect(['index']);
         }
         throw new ForbiddenHttpException('You dont have permission to perform this action!');
     }

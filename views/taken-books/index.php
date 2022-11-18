@@ -62,9 +62,8 @@ $this->title = 'Taken Books History';
                 }
             ],
             [
-                    'label' => 'Return Date',
-                'attribute' => 'returned_date',
-                'value' => fn($model) => $model->returned_date ?: '-',
+                'label' => 'Date For Return',
+                'attribute' => 'date_for_return',
             ],
             [
                 'class' => ActionColumn::className(),
