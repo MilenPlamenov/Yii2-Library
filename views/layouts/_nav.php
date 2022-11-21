@@ -12,6 +12,11 @@ NavBar::begin([
 echo Nav::widget([
     'options' => ['class' => 'navbar-nav'],
     'items' => [
+        !Yii::$app->user->isGuest ? (
+        Yii::$app->user->identity->isAdminOrLibrarian() ?
+            (['label' => 'Users', 'url' => ['/user/index']])
+            : '') : '',
+
         ['label' => 'Books', 'url' => ['book/index']],
 
         !Yii::$app->user->isGuest ?
@@ -22,17 +27,13 @@ echo Nav::widget([
 
         Yii::$app->user->isGuest ?
             (['label' => 'Register', 'url' => ['/site/register']])
-            : ['label' => 'View Account', 'url' => ['user/view', 'id' => Yii::$app->user->identity->id]],
+            : '',
 
         !Yii::$app->user->isGuest ? (
         Yii::$app->user->identity->isAdminOrLibrarian() ?
             (['label' => 'Add Book', 'url' => ['/book/create']])
-            : '') : '',
-
-        !Yii::$app->user->isGuest ? (
-        Yii::$app->user->identity->isAdminOrLibrarian() ?
-            (['label' => 'Users', 'url' => ['/user/index']])
-            : '') : '',
+            :
+            ['label' => 'View Account', 'url' => ['user/view', 'id' => Yii::$app->user->identity->id]]) : '',
 
         Yii::$app->user->isGuest ?
             ['label' => 'Login', 'url' => ['/site/login']]

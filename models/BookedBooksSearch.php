@@ -72,7 +72,7 @@ class BookedBooksSearch extends BookedBooks
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'user_id' => $this->user_id,
             'amount' => $this->amount,
             'booked_date' => $this->booked_date,
             'ordered' => false

@@ -27,11 +27,9 @@ $this->title = 'Users';
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            'id',
             'first_name',
             'last_name',
             'email',
-            'address',
             [
                     'attribute' => 'telephone_number',
                     'label' => 'Number',
@@ -50,6 +48,16 @@ $this->title = 'Users';
                 'value' => function ($data) {
                     return Html::a(Html::encode('Check out'),
                         ['user/currently-taken-books', 'id' => $data['id']]);
+                },
+                'contentOptions' => ['style' => 'width: 11.7%'],
+
+            ],
+            [
+                'label' => 'Live taking',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::a(Html::encode('Order'),
+                        ['user/add-live-record', 'user_id' => $data['id']]);
                 },
                 'contentOptions' => ['style' => 'width: 11.7%'],
 

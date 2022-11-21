@@ -1,10 +1,13 @@
 <?php
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\User $model */
+/** @var app\models\BookedBooksSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = $model->email;
 
@@ -22,6 +25,9 @@ $this->title = $model->email;
             ['class' => 'btn btn-secondary']
         );
         if (Yii::$app->user->identity->isAdminOrLibrarian()) {
+            echo Html::a('Order books (no booking)',
+                ['add-live-record', 'user_id' => $model->id],
+                ['class' => 'btn btn-warning']);
             echo Html::a('Update', ['update', 'id' => $model->id],
                 ['class' => 'btn btn-primary']);
             echo Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -33,7 +39,7 @@ $this->title = $model->email;
             ]);
         } else {
             echo Html::a(
-                    'Change Password',
+                'Change Password',
                 ['change-password', 'id' => $model->id],
                 ['class' => 'btn btn-primary']
             );
@@ -45,16 +51,13 @@ $this->title = $model->email;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            [
-                'label' => 'User ID',
-                'attribute' => 'id',
-            ],
             'first_name',
             'last_name',
-            'email:email',
+            'email',
             'address',
             'telephone_number',
         ],
     ]) ?>
+
 
 </div>

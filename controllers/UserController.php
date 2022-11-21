@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\BookedBooksSearch;
 use app\models\TakenBooks;
 use app\models\TakenBooksSearch;
 use app\models\User;
@@ -30,10 +31,10 @@ class UserController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['update', 'delete', 'index'],
+                    'only' => ['update', 'delete', 'index', 'add-live-record'],
                     'rules' => [
                         [
-                            'actions' => ['update', 'delete', 'index'],
+                            'actions' => ['update', 'delete', 'index', 'add-live-record'],
                             'allow' => true,
                             'matchCallback' => function ($rule, $action) {
                                 return Yii::$app->user->identity->isAdminOrLibrarian();
@@ -67,6 +68,34 @@ class UserController extends Controller
         ]);
     }
 
+    public function actionAddLiveRecord($user_id) {
+        $model = new TakenBooks();
+
+        $model->user_id = $user_id;
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->amount = Yii::$app->request->post()['TakenBooks']['amount'];
+                $model->book_id = Yii::$app->request->post()['TakenBooks']['book_id'];
+                if ($model->amount > 0 && $model->book->available_books >= $model->amount) {
+                    $model->book->available_books -= $model->amount;
+                    if ($model->book->save() && $model->save()) {
+                        Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
+                            . ' amount of ' . $model->amount);
+                        return $this->redirect(['add-live-record', 'user_id' => $model->user_id]);
+                    }
+                } else {
+                    Yii::$app->session->setFlash('error', 'Invalid data!');
+                    $model->loadDefaultValues();
+                }
+            }
+        }
+        return $this->render('add-live-record', [
+            'model' => $model,
+            ]);
+
+    }
+
     public function actionCurrentlyTakenBooks($id) {
         $user = $this->findModel($id);
         $searchModel = new TakenBooksSearch();
@@ -87,8 +116,15 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $searchModel = new BookedBooksSearch();
+        $searchModel->user_id = $model->id;
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -137,6 +173,8 @@ class UserController extends Controller
             if ($model->validatePassword($model->old_password)) {
                 $this->hashNewPassword($model);
                 $model->save();
+                Yii::$app->session->setFlash('success', "Password set successfully!");
+
                 return $this->redirect(['book/index']);
             } else {
                 Yii::$app->session->setFlash('error', "Incorrect password!");

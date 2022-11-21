@@ -189,6 +189,7 @@ class TakenBooksController extends Controller
      * @return TakenBooks the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
+
     protected function findModel($taking_id)
     {
         if (($model = TakenBooks::findOne(['taking_id' => $taking_id])) !== null) {
