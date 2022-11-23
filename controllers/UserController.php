@@ -32,10 +32,10 @@ class UserController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['update', 'delete', 'index', 'add-live-record'],
+                    'only' => ['update', 'delete', 'index', 'add-live-record', 'cart'],
                     'rules' => [
                         [
-                            'actions' => ['update', 'delete', 'index', 'add-live-record'],
+                            'actions' => ['update', 'delete', 'index', 'add-live-record', 'cart'],
                             'allow' => true,
                             'matchCallback' => function ($rule, $action) {
                                 return Yii::$app->user->identity->isAdminOrLibrarian();

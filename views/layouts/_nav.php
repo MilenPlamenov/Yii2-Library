@@ -35,6 +35,10 @@ echo Nav::widget([
             :
             ['label' => 'View Account', 'url' => ['user/view', 'id' => Yii::$app->user->identity->id]]) : '',
 
+        !Yii::$app->user->isGuest ? (
+        Yii::$app->user->identity->isAdminOrLibrarian() ?
+            (['label' => 'Live record cart', 'url' => ['/user/cart']])
+            : '') : '',
 
         Yii::$app->user->isGuest ?
             ['label' => 'Login', 'url' => ['/site/login']]
