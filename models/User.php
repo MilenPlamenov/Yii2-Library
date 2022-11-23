@@ -28,6 +28,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public $old_password;
     public $new_password;
     public $repeat_new_password;
+    public $book_id;
+    public $amount;
     /**
      * {@inheritdoc}
      */
@@ -43,7 +45,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['first_name', 'last_name', 'email', 'password', 'telephone_number', 'auth_key', 'access_token'], 'required'],
-            [['reg_date', 'new_password', 'old_password'], 'safe'],
+            [['reg_date', 'new_password', 'old_password', 'book_id', 'amount'], 'safe'],
             [['is_regular_user', 'is_librarian', 'is_admin'], 'integer'],
             [['first_name', 'last_name'], 'string', 'max' => 16],
             [['email', 'telephone_number'], 'string', 'max' => 32],

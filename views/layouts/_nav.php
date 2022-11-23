@@ -35,6 +35,7 @@ echo Nav::widget([
             :
             ['label' => 'View Account', 'url' => ['user/view', 'id' => Yii::$app->user->identity->id]]) : '',
 
+
         Yii::$app->user->isGuest ?
             ['label' => 'Login', 'url' => ['/site/login']]
             : ('<li class="nav-item">'

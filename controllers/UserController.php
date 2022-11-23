@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Book;
 use app\models\BookedBooksSearch;
 use app\models\TakenBooks;
 use app\models\TakenBooksSearch;
@@ -68,35 +69,92 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionAddLiveRecord($user_id) {
-        $model = new TakenBooks();
+//    public function actionAddLiveRecord($user_id) {
+//        $model = new TakenBooks();
+//
+//        $model->user_id = $user_id;
+//
+//        if ($this->request->isPost) {
+//            if ($model->load($this->request->post())) {
+//                $model->amount = Yii::$app->request->post()['TakenBooks']['amount'];
+//                $model->book_id = Yii::$app->request->post()['TakenBooks']['book_id'];
+//                if ($model->amount > 0 && $model->book->available_books >= $model->amount) {
+//                    $model->book->available_books -= $model->amount;
+//                    if ($model->book->save() && $model->save()) {
+//                        Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
+//                            . ' amount of ' . $model->amount);
+//                        Yii::$app->session->set('taking'. $model->taking_id, $model->attributes);
+//                        return $this->redirect(['add-live-record', 'user_id' => $model->user_id]);
+//                    }
+//                } else {
+//                    Yii::$app->session->setFlash('error', 'Invalid data!');
+//                    $model->loadDefaultValues();
+//                }
+//            }
+//        }
+//        return $this->render('add-live-record', [
+//            'model' => $model,
+//            ]);
+//    }
 
-        $model->user_id = $user_id;
 
+    public function actionAddLiveRecord($user_id)
+    {
+        $user = User::find()->where(['id' => $user_id])->one();
+        $tid = Yii::$app->security->generateRandomString(12);
+        $items = [];
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->amount = Yii::$app->request->post()['TakenBooks']['amount'];
-                $model->book_id = Yii::$app->request->post()['TakenBooks']['book_id'];
-                if ($model->amount > 0 && $model->book->available_books >= $model->amount) {
-                    $model->book->available_books -= $model->amount;
-                    if ($model->book->save() && $model->save()) {
-                        Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
-                            . ' amount of ' . $model->amount);
-                        return $this->redirect(['add-live-record', 'user_id' => $model->user_id]);
-                    }
+            $book_id = Yii::$app->request->post()['User']['book_id'];
+
+            $book = Book::find()->where(['id' => $book_id])->one();
+            if ($book) {
+                $amount = Yii::$app->request->post()['User']['amount'];
+                if ($amount > 0 && $book->available_books >= $amount) {
+                    $items += Yii::$app->request->post()['User'];
+                    $items += ['user_id' => $user_id];
+                    Yii::$app->session->set($tid, $items);
+                    Yii::$app->session->set('has_books_in_cart', 'yes');
+                    return $this->redirect(['add-live-record', 'user_id' => $user_id]);
                 } else {
-                    Yii::$app->session->setFlash('error', 'Invalid data!');
-                    $model->loadDefaultValues();
+                    Yii::$app->session->setFlash('error', 'Amount overflow!');
+                }
+            } else {
+                Yii::$app->session->setFlash('error', 'Book with this ID does not exist!');
+            }
+
+
+        }
+        return $this->render('add-live-record', [
+            'user' => $user,
+        ]);
+    }
+
+    public function actionCart() {
+        if ($this->request->isPost) {
+            foreach($_SESSION as $key => $value) {
+                if(strlen($key) == 12) {
+                    $model = new TakenBooks();
+                        $model->book_id = $value['book_id'];
+                        $model->amount = $value['amount'];
+                        $model->user_id = $value['user_id'];
+
+                        $model->book->available_books -= $model->amount;
+                        if ($model->book->save() && $model->save()) {
+                            Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
+                            . ' amount of ' . $model->amount);
+                            Yii::$app->session->removeAll();
+                            $this->redirect('index');
+                        }
                 }
             }
         }
-        return $this->render('add-live-record', [
-            'model' => $model,
-            ]);
+        return $this->render('cart', [
 
+        ]);
     }
 
-    public function actionCurrentlyTakenBooks($id) {
+    public function actionCurrentlyTakenBooks($id)
+    {
         $user = $this->findModel($id);
         $searchModel = new TakenBooksSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $user->id, 0);
@@ -162,12 +220,14 @@ class UserController extends Controller
         return $this->redirect(['index']);
     }
 
-    protected function hashNewPassword($model) {
+    protected function hashNewPassword($model)
+    {
         $hash = Yii::$app->getSecurity()->generatePasswordHash($model->new_password);
         $model->password = $hash;
     }
 
-    public function actionChangePassword($id) {
+    public function actionChangePassword($id)
+    {
         $model = $this->findModel($id);
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->validatePassword($model->old_password)) {
