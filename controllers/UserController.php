@@ -8,6 +8,7 @@ use app\models\TakenBooks;
 use app\models\TakenBooksSearch;
 use app\models\User;
 use app\models\UserSearch;
+use Codeception\Constraint\Page;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -32,10 +33,10 @@ class UserController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['update', 'delete', 'index', 'add-live-record', 'cart'],
+                    'only' => ['update', 'delete', 'index', 'add-live-record', 'cart', 'remove-from-cart'],
                     'rules' => [
                         [
-                            'actions' => ['update', 'delete', 'index', 'add-live-record', 'cart'],
+                            'actions' => ['update', 'delete', 'index', 'add-live-record', 'cart', 'remove-from-cart'],
                             'allow' => true,
                             'matchCallback' => function ($rule, $action) {
                                 return Yii::$app->user->identity->isAdminOrLibrarian();
@@ -47,6 +48,9 @@ class UserController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'remove-from-cart' => ['POST'],
+                        'add-amount' => ['POST'],
+                        'remove-amount' => ['POST'],
                     ],
                 ],
             ]
@@ -97,6 +101,56 @@ class UserController extends Controller
 //            ]);
 //    }
 
+    public function anyItemsLeft() {
+        $any_items = false;
+        foreach($_SESSION as $key => $value) {
+            if (strlen($key) == 12) {
+                $any_items = true;
+                break;
+            }
+        }
+        return $any_items;
+    }
+
+    public function actionRemoveFromCart($item_id) {
+        if ($this->request->isPost) {
+            $item = Yii::$app->session->get($item_id);
+            Yii::$app->session->remove($item_id);
+
+            if (!$this->anyItemsLeft()) {
+                Yii::$app->session->remove('has_books_in_cart');
+            }
+            return $this->renderAjax('_buttons', ['key' => $item_id,  'value' => $item]);
+        }
+    }
+
+    public function actionAddAmount($item_id) {
+        if ($this->request->isPost) {
+            $item = Yii::$app->session->get($item_id);
+            $book = Book::find()->where(['id' => $item['book_id']])->one();
+
+            if($book->available_books >= $item['amount'] + 1) {
+                $item['amount'] += 1;
+                Yii::$app->session->set($item_id, $item);
+            } else {
+                Yii::$app->session->setFlash('error', 'Amount overflow');
+            }
+            return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
+        }
+    }
+
+    public function actionRemoveAmount($item_id) {
+        if ($this->request->isPost) {
+            $item = Yii::$app->session->get($item_id);
+            if ($item['amount'] - 1 <= 0) {
+                $item['amount'] = 1;
+            } else {
+                $item['amount'] -= 1;
+                Yii::$app->session->set($item_id, $item);
+            }
+            return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
+        }
+    }
 
     public function actionAddLiveRecord($user_id)
     {
@@ -105,7 +159,6 @@ class UserController extends Controller
         $items = [];
         if ($this->request->isPost) {
             $book_id = Yii::$app->request->post()['User']['book_id'];
-
             $book = Book::find()->where(['id' => $book_id])->one();
             if ($book) {
                 $amount = Yii::$app->request->post()['User']['amount'];
@@ -138,12 +191,17 @@ class UserController extends Controller
                         $model->amount = $value['amount'];
                         $model->user_id = $value['user_id'];
 
-                        $model->book->available_books -= $model->amount;
-                        if ($model->book->save() && $model->save()) {
-                            Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
-                            . ' amount of ' . $model->amount);
-                            Yii::$app->session->removeAll();
-                            $this->redirect('index');
+                        if ($model->book->available_books >= $model->amount) {
+                            $model->book->available_books -= $model->amount;
+                            if ($model->book->save() && $model->save()) {
+                                Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
+                                    . ' amount of ' . $model->amount);
+                                Yii::$app->session->remove($key);
+                                $this->redirect('index');
+                            }
+                        } else {
+                            Yii::$app->session->setFlash('error', 'Amount overflow!!');
+                            $this->redirect('cart');
                         }
                 }
             }

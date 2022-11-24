@@ -1,6 +1,7 @@
 <?php
 
 use app\models\User;
+use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -15,6 +16,14 @@ $this->title = 'Users';
 <div class="user-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+
+    <?php Modal::begin([
+            'id' => 'modal',
+            'size' => 'modal-lg'
+    ]);
+    Modal::end()
+    ?>
+
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <?= GridView::widget([
