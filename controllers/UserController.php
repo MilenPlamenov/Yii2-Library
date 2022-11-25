@@ -167,17 +167,19 @@ class UserController extends Controller
                     $items += ['user_id' => $user_id];
                     Yii::$app->session->set($tid, $items);
                     Yii::$app->session->set('has_books_in_cart', 'yes');
-                    return $this->redirect(['add-live-record', 'user_id' => $user_id]);
+                    return 1;
                 } else {
-                    Yii::$app->session->setFlash('error', 'Amount overflow!');
+//                    Yii::$app->session->setFlash('error', 'Amount overflow!');
+                    return 0;
                 }
             } else {
-                Yii::$app->session->setFlash('error', 'Book with this ID does not exist!');
+//                Yii::$app->session->setFlash('error', 'Book with this ID does not exist!');
+                return 0;
             }
 
 
         }
-        return $this->render('add-live-record', [
+        return $this->renderAjax('add-live-record', [
             'user' => $user,
         ]);
     }

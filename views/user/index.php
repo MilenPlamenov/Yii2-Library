@@ -18,13 +18,16 @@ $this->title = 'Users';
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php Modal::begin([
-            'id' => 'modal',
-            'size' => 'modal-lg'
+        'title' => 'Add live record',
+        'id' => 'modal',
+        'size' => 'modal-lg',
+
     ]);
+
+    echo "<div id='modelContent'></div>";
+
     Modal::end()
-    ?>
-
-
+?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <?= GridView::widget([
         'tableOptions' => [
@@ -66,7 +69,7 @@ $this->title = 'Users';
                 'format' => 'raw',
                 'value' => function ($data) {
                     return Html::a(Html::encode('Order'),
-                        ['user/add-live-record', 'user_id' => $data['id']]);
+                        ['user/add-live-record', 'user_id' => $data['id']], ['class' => 'update-modal-link']);
                 },
                 'contentOptions' => ['style' => 'width: 11.7%'],
 

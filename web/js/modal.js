@@ -1,9 +1,10 @@
-$(document).ready(function(){
-    $('#modalBtn').click(function () {
-        $('#modal').show()
-            .find('#modalContent')
-            .load($(this)
-                .attr('value')
-            )
-    })
+$(function () {
+    $('.update-modal-link').click(function (e) {
+        e.preventDefault();
+        $('#modal')
+            .modal('show')
+            .find('#modelContent')
+            .load($(this).attr('href'));
+    });
 });
+
