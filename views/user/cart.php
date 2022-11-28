@@ -10,6 +10,7 @@ use yii\widgets\Pjax;
 <h1>Books Cart</h1>
 <?= print_r($_SESSION);
 ?>
+<div id="items">
 <?php foreach ($_SESSION as $key => $value): ?>
     <?php if (strlen($key) == 12): ?>
 <div class="card-group m-4">
@@ -27,7 +28,7 @@ use yii\widgets\Pjax;
 </div>
     <?php endif; ?>
 <?php endforeach; ?>
-
+</div>
 <?php if (Yii::$app->session->has('has_books_in_cart')) {
     $form = ActiveForm::begin();
     echo Html::submitButton('Proceed', ['class' => 'btn btn-success', 'id' => 'proceed-btn']);

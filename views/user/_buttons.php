@@ -35,17 +35,19 @@ use yii\helpers\Html;
 <script>
     $(document).ready(function(){
         $("[id^=trash-button]").click(function (event) {
-            console.log(event.target)
-            console.log(this)
             $(this).parent().parent().parent().parent().parent().hide();
-            if (!$(this).parent().parent().parent().parent().parent().siblings('.card-group')) {
-                $("#proceed-btn").hide();
-                $(document.createElement('h2')).html("Empty cart").appendTo(".container");
-            }
         });
     });
 </script>
 
+<script>
+    $(document).ready(function () {
+        if (!$(".card-group:visible").length) {
+            $("#proceed-btn").hide();
+            $(document.createElement('h2')).html("Empty cart").appendTo(".container");
+        }
+    })
+</script>
 <!--<script>-->
 <!--    $(document).ready(function(){-->
 <!--        $(".trash").click(function (event) {-->

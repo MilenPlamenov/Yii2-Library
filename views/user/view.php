@@ -25,9 +25,6 @@ $this->title = $model->email;
             ['class' => 'btn btn-secondary']
         );
         if (Yii::$app->user->identity->isAdminOrLibrarian()) {
-            echo Html::a('Order books (no booking)',
-                ['add-live-record', 'user_id' => $model->id],
-                ['class' => 'btn btn-warning']);
             echo Html::a('Update', ['update', 'id' => $model->id],
                 ['class' => 'btn btn-primary']);
             echo Html::a('Delete', ['delete', 'id' => $model->id], [
