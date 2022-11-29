@@ -36,6 +36,7 @@ use yii\helpers\Html;
     $(document).ready(function(){
         $("[id^=trash-button]").click(function (event) {
             $(this).parent().parent().parent().parent().parent().hide();
+            $("#item-count").html($(".card-group:visible").length);
         });
     });
 </script>
@@ -44,7 +45,7 @@ use yii\helpers\Html;
     $(document).ready(function () {
         if (!$(".card-group:visible").length) {
             $("#proceed-btn").hide();
-            $(document.createElement('h2')).html("Empty cart").appendTo(".container");
+            $(document.createElement('h2')).html("Empty cart").appendTo("#items");
         }
     })
 </script>

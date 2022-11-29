@@ -101,9 +101,10 @@ class UserController extends Controller
 //            ]);
 //    }
 
-    public function anyItemsLeft() {
+    public function anyItemsLeft()
+    {
         $any_items = false;
-        foreach($_SESSION as $key => $value) {
+        foreach ($_SESSION as $key => $value) {
             if (strlen($key) == 12) {
                 $any_items = true;
                 break;
@@ -112,26 +113,26 @@ class UserController extends Controller
         return $any_items;
     }
 
-    public function actionRemoveFromCart($item_id) {
+    public function actionRemoveFromCart($item_id)
+    {
         if ($this->request->isPost) {
-            $item = Yii::$app->session->get($item_id);
-            Yii::$app->session->remove($item_id);
+            $item = $_SESSION['cart'][$item_id];
+            unset($_SESSION['cart'][$item_id]);
 
-            if (!$this->anyItemsLeft()) {
-                Yii::$app->session->remove('has_books_in_cart');
-            }
-            return $this->renderAjax('_buttons', ['key' => $item_id,  'value' => $item]);
+            return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
         }
     }
 
-    public function actionAddAmount($item_id) {
+    public function actionAddAmount($item_id)
+    {
         if ($this->request->isPost) {
-            $item = Yii::$app->session->get($item_id);
+            $item = $_SESSION['cart'][$item_id];
             $book = Book::find()->where(['id' => $item['book_id']])->one();
 
-            if($book->available_books >= $item['amount'] + 1) {
+            if ($book->available_books >= $item['amount'] + 1) {
                 $item['amount'] += 1;
-                Yii::$app->session->set($item_id, $item);
+                $_SESSION['cart'][$item_id] = $item;
+                // here !!
             } else {
                 Yii::$app->session->setFlash('error', 'Amount overflow');
             }
@@ -139,14 +140,15 @@ class UserController extends Controller
         }
     }
 
-    public function actionRemoveAmount($item_id) {
+    public function actionRemoveAmount($item_id)
+    {
         if ($this->request->isPost) {
-            $item = Yii::$app->session->get($item_id);
+            $item = $_SESSION['cart'][$item_id];
             if ($item['amount'] - 1 <= 0) {
                 $item['amount'] = 1;
             } else {
                 $item['amount'] -= 1;
-                Yii::$app->session->set($item_id, $item);
+                $_SESSION['cart'][$item_id] = $item;
             }
             return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
         }
@@ -165,8 +167,10 @@ class UserController extends Controller
                 if ($amount > 0 && $book->available_books >= $amount) {
                     $items += Yii::$app->request->post()['User'];
                     $items += ['user_id' => $user_id];
-                    Yii::$app->session->set($tid, $items);
-                    Yii::$app->session->set('has_books_in_cart', 'yes');
+                    if (!isset($_SESSION['cart'])) {
+                        $_SESSION['cart'] = [];
+                    }
+                    $_SESSION['cart'][$tid] = $items;
                     return 1;
                 } else {
 //                    Yii::$app->session->setFlash('error', 'Amount overflow!');
@@ -184,33 +188,34 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionCart() {
+    public function actionCart()
+    {
         if ($this->request->isPost) {
-            foreach($_SESSION as $key => $value) {
-                if(strlen($key) == 12) {
-                    $model = new TakenBooks();
-                        $model->book_id = $value['book_id'];
-                        $model->amount = $value['amount'];
-                        $model->user_id = $value['user_id'];
+            if (isset($_SESSION['cart'])) {
 
-                        if ($model->book->available_books >= $model->amount) {
-                            $model->book->available_books -= $model->amount;
-                            if ($model->book->save() && $model->save()) {
-                                Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
-                                    . ' amount of ' . $model->amount);
-                                Yii::$app->session->remove($key);
-                                $this->redirect('index');
-                            }
-                        } else {
-                            Yii::$app->session->setFlash('error', 'Amount overflow!!');
-                            $this->redirect('cart');
+                foreach ($_SESSION['cart'] as $key => $value) {
+
+                    $model = new TakenBooks();
+                    $model->book_id = $value['book_id'];
+                    $model->amount = $value['amount'];
+                    $model->user_id = $value['user_id'];
+
+                    if ($model->book->available_books >= $model->amount) {
+                        $model->book->available_books -= $model->amount;
+                        if ($model->book->save() && $model->save()) {
+                            Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
+                                . ' amount of ' . $model->amount);
+                            unset($_SESSION['cart'][$key]);
+                            $this->redirect('index');
                         }
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Amount overflow!!');
+                        $this->redirect('cart');
+                    }
                 }
             }
         }
-        return $this->render('cart', [
-
-        ]);
+        return $this->render('cart');
     }
 
     public function actionCurrentlyTakenBooks($id)

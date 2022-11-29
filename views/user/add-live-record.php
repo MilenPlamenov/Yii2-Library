@@ -44,6 +44,9 @@ $('form#{$user->formName()}').on('beforeSubmit', function(e){
     )
     .done(function(result){
         if(result == 1){
+            $("#item-count").html(function(index,currentContent) {
+            return parseInt(currentContent) + 1;
+            });
             $(\$form).trigger("reset");
             $('<h4/>',{
                 text: 'Successfully added item to the cart',
