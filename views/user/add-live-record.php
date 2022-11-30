@@ -2,11 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\jui\Autocomplete;
+
 
 /** @var yii\web\View $this */
 /** @var app\models\User $user */
 /** @var yii\widgets\ActiveForm $form */
-echo var_export($_SESSION);
+echo var_dump($_SESSION['cart']);
 
 $this->title = 'Live taking for user: ' . $user->email;
 ?>
@@ -32,6 +34,7 @@ $this->title = 'Live taking for user: ' . $user->email;
     <?php ActiveForm::end(); ?>
 
 </div>
+
 
 <?php
 $script = <<< JS

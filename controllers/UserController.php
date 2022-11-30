@@ -113,51 +113,79 @@ class UserController extends Controller
         return $any_items;
     }
 
-    public function actionRemoveFromCart($item_id)
+    public function actionRemoveFromCart($user_id, $item_id)
     {
         if ($this->request->isPost) {
-            $item = $_SESSION['cart'][$item_id];
-            unset($_SESSION['cart'][$item_id]);
+            $item = $_SESSION['cart'][$user_id][$item_id];
+            unset($_SESSION['cart'][$user_id][$item_id]);
 
-            return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
+            if (!count($_SESSION['cart'][$user_id])) {
+                unset($_SESSION['cart'][$user_id]);
+            }
+
+            return $this->renderAjax('_buttons', [
+                'user_id' => $user_id,
+                'book_and_amount_array' => $item,
+                'index' => $item_id,
+            ]);
+
         }
     }
 
-    public function actionAddAmount($item_id)
+    public function actionAddAmount($user_id, $item_id)
     {
         if ($this->request->isPost) {
-            $item = $_SESSION['cart'][$item_id];
+            $item = $_SESSION['cart'][$user_id][$item_id];
             $book = Book::find()->where(['id' => $item['book_id']])->one();
 
             if ($book->available_books >= $item['amount'] + 1) {
                 $item['amount'] += 1;
-                $_SESSION['cart'][$item_id] = $item;
+                $_SESSION['cart'][$user_id][$item_id] = $item;
                 // here !!
             } else {
                 Yii::$app->session->setFlash('error', 'Amount overflow');
             }
-            return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
+            return $this->renderAjax('_buttons', [
+                'user_id' => $user_id,
+                'book_and_amount_array' => $item,
+                'index' => $item_id,
+            ]);
         }
     }
 
-    public function actionRemoveAmount($item_id)
+    public function actionRemoveAmount($user_id, $item_id)
     {
         if ($this->request->isPost) {
-            $item = $_SESSION['cart'][$item_id];
+            $item = $_SESSION['cart'][$user_id][$item_id];
             if ($item['amount'] - 1 <= 0) {
                 $item['amount'] = 1;
             } else {
                 $item['amount'] -= 1;
-                $_SESSION['cart'][$item_id] = $item;
+                $_SESSION['cart'][$user_id][$item_id] = $item;
             }
-            return $this->renderAjax('_buttons', ['key' => $item_id, 'value' => $item]);
+            return $this->renderAjax('_buttons', [
+                'user_id' => $user_id,
+                'book_and_amount_array' => $item,
+                'index' => $item_id,
+            ]);
+        }
+    }
+
+
+    public function actionSetupAddLiveRecord($user_id) {
+        if ($this->request->isPost) {
+            if (!isset($_SESSION['selected_user'])) {
+                $_SESSION['selected_user'] = $user_id;
+            } else {
+                throw new BadRequestHttpException('Already selected user');
+            }
+            return $this->redirect('book/index');
         }
     }
 
     public function actionAddLiveRecord($user_id)
     {
         $user = User::find()->where(['id' => $user_id])->one();
-        $tid = Yii::$app->security->generateRandomString(12);
         $items = [];
         if ($this->request->isPost) {
             $book_id = Yii::$app->request->post()['User']['book_id'];
@@ -166,11 +194,10 @@ class UserController extends Controller
                 $amount = Yii::$app->request->post()['User']['amount'];
                 if ($amount > 0 && $book->available_books >= $amount) {
                     $items += Yii::$app->request->post()['User'];
-                    $items += ['user_id' => $user_id];
                     if (!isset($_SESSION['cart'])) {
                         $_SESSION['cart'] = [];
                     }
-                    $_SESSION['cart'][$tid] = $items;
+                    $_SESSION['cart'][$user_id][] = $items;
                     return 1;
                 } else {
 //                    Yii::$app->session->setFlash('error', 'Amount overflow!');
@@ -193,24 +220,29 @@ class UserController extends Controller
         if ($this->request->isPost) {
             if (isset($_SESSION['cart'])) {
 
-                foreach ($_SESSION['cart'] as $key => $value) {
+                foreach ($_SESSION['cart'] as $key => $items) {
+                    foreach ($items as $idx => $value) {
+                        $model = new TakenBooks();
+                        $model->book_id = $value['book_id'];
+                        $model->amount = $value['amount'];
+                        $model->user_id = $key;
 
-                    $model = new TakenBooks();
-                    $model->book_id = $value['book_id'];
-                    $model->amount = $value['amount'];
-                    $model->user_id = $value['user_id'];
+                        if ($model->book->available_books >= $model->amount) {
+                            $model->book->available_books -= $model->amount;
+                            if ($model->book->save() && $model->save()) {
+                                Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
+                                    . ' amount of ' . $model->amount);
+                                unset($_SESSION['cart'][$key][$idx]);
+                                if (!count($_SESSION['cart'][$key])) {
+                                    unset($_SESSION['cart'][$key]);
+                                }
 
-                    if ($model->book->available_books >= $model->amount) {
-                        $model->book->available_books -= $model->amount;
-                        if ($model->book->save() && $model->save()) {
-                            Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
-                                . ' amount of ' . $model->amount);
-                            unset($_SESSION['cart'][$key]);
-                            $this->redirect('index');
+                                $this->redirect('index');
+                            }
+                        } else {
+                            Yii::$app->session->setFlash('error', 'Amount overflow!!');
+                            $this->redirect('cart');
                         }
-                    } else {
-                        Yii::$app->session->setFlash('error', 'Amount overflow!!');
-                        $this->redirect('cart');
                     }
                 }
             }
