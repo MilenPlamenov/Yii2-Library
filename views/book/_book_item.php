@@ -1,10 +1,24 @@
 <?php
 /** @var app\models\Book $model */
 
+use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
 
 ?>
+
+<?php Modal::begin([
+    'title' => 'Add live record',
+    'id' => 'modal',
+    'size' => 'modal-lg',
+
+]);
+
+echo "<div id='modelContent'></div>";
+
+Modal::end()
+?>
+
 
 <div class="container d-flex shadow p-3 mt-4">
     <div class="col-lg-2 col-sm-4 col">
@@ -31,6 +45,10 @@ use yii\helpers\StringHelper;
                                 'method' => 'post',
                             ],
                         ]);
+                        if (isset($_SESSION['selected_user']) and $model->available_books){
+                            echo Html::a('Add to cart', [\yii\helpers\Url::toRoute(['user/add-live-record']), 'book_id' => $model->id],
+                                ['class' => 'update-modal-link btn btn-danger btn-lg']);
+                        }
                     }
                 }
             ?>

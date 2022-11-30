@@ -33,10 +33,10 @@ class UserController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['update', 'delete', 'index', 'add-live-record', 'cart', 'remove-from-cart'],
+                    'only' => ['update', 'delete', 'index', 'add-live-record', 'cart', 'remove-from-cart', 'setup-add-live-record', 'clear'],
                     'rules' => [
                         [
-                            'actions' => ['update', 'delete', 'index', 'add-live-record', 'cart', 'remove-from-cart'],
+                            'actions' => ['update', 'delete', 'index', 'add-live-record', 'cart', 'remove-from-cart', 'setup-add-live-record', 'clear'],
                             'allow' => true,
                             'matchCallback' => function ($rule, $action) {
                                 return Yii::$app->user->identity->isAdminOrLibrarian();
@@ -51,6 +51,8 @@ class UserController extends Controller
                         'remove-from-cart' => ['POST'],
                         'add-amount' => ['POST'],
                         'remove-amount' => ['POST'],
+                        'setup-add-live-record' => ['POST'],
+                        'clear' => ['POST'],
                     ],
                 ],
             ]
@@ -121,6 +123,7 @@ class UserController extends Controller
 
             if (!count($_SESSION['cart'][$user_id])) {
                 unset($_SESSION['cart'][$user_id]);
+                unset($_SESSION['selected_user']);
             }
 
             return $this->renderAjax('_buttons', [
@@ -131,6 +134,7 @@ class UserController extends Controller
 
         }
     }
+
 
     public function actionAddAmount($user_id, $item_id)
     {
@@ -172,32 +176,42 @@ class UserController extends Controller
     }
 
 
-    public function actionSetupAddLiveRecord($user_id) {
+    public function actionClear() {
         if ($this->request->isPost) {
-            if (!isset($_SESSION['selected_user'])) {
-                $_SESSION['selected_user'] = $user_id;
-            } else {
-                throw new BadRequestHttpException('Already selected user');
-            }
-            return $this->redirect('book/index');
+            unset($_SESSION['cart'][$_SESSION['selected_user']]);
+            unset($_SESSION['selected_user']);
+            return $this->redirect('index');
+
         }
     }
 
-    public function actionAddLiveRecord($user_id)
+    public function actionSetupAddLiveRecord($user_id) {
+        if ($this->request->isPost) {
+            if (!isset($_SESSION['selected_user']) or empty($_SESSION['selected_user'])) {
+                $_SESSION['selected_user'] = $user_id;
+                $_SESSION['cart'][$user_id] = [];
+            } else {
+                throw new BadRequestHttpException('Already selected user');
+            }
+            return $this->redirect(\yii\helpers\Url::toRoute(['book/index']));
+        }
+    }
+
+    public function actionAddLiveRecord($book_id)
     {
-        $user = User::find()->where(['id' => $user_id])->one();
+        $user = User::find()->where(['id' => $_SESSION['selected_user']])->one();
         $items = [];
         if ($this->request->isPost) {
-            $book_id = Yii::$app->request->post()['User']['book_id'];
             $book = Book::find()->where(['id' => $book_id])->one();
             if ($book) {
                 $amount = Yii::$app->request->post()['User']['amount'];
                 if ($amount > 0 && $book->available_books >= $amount) {
                     $items += Yii::$app->request->post()['User'];
+                    $items += ['book_id' => $book_id];
                     if (!isset($_SESSION['cart'])) {
                         $_SESSION['cart'] = [];
                     }
-                    $_SESSION['cart'][$user_id][] = $items;
+                    $_SESSION['cart'][$_SESSION['selected_user']][] = $items;
                     return 1;
                 } else {
 //                    Yii::$app->session->setFlash('error', 'Amount overflow!');
@@ -235,6 +249,7 @@ class UserController extends Controller
                                 unset($_SESSION['cart'][$key][$idx]);
                                 if (!count($_SESSION['cart'][$key])) {
                                     unset($_SESSION['cart'][$key]);
+                                    unset($_SESSION['selected_user']);
                                 }
 
                                 $this->redirect('index');

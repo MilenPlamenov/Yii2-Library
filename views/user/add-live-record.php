@@ -22,8 +22,6 @@ $this->title = 'Live taking for user: ' . $user->email;
     ); ?>
     <?php $form = ActiveForm::begin(['id' => $user->formName()]); ?>
 
-    <?= $form->field($user, 'book_id')->textInput() ?>
-
     <?= $form->field($user, 'amount')->textInput() ?>
 
     <div class="form-group m-2">

@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 ?>
 
 <h1>Books Cart</h1>
-<?= print_r($_SESSION); ?>
+<?= print_r($_SESSION['cart']); ?>
 <div id="items">
     <?php if (isset($_SESSION['cart']) and !empty($_SESSION['cart'])): ?>
         <?php foreach ($_SESSION['cart'] as $user_id => $items_associative_arrays): ?>
@@ -40,6 +40,9 @@ use yii\widgets\Pjax;
         $form = ActiveForm::begin();
         echo Html::submitButton('Proceed', ['class' => 'btn btn-success', 'id' => 'proceed-btn']);
         ActiveForm::end();
+        echo Html::a('Clear', ['clear'], ['data' => [
+            'method' => 'post',
+        ], 'class' => 'btn btn-danger', 'id' => 'clear-btn'])
         ?>
     <?php else: echo '<h2>Empty cart</h2>'; ?>
 

@@ -13,7 +13,6 @@ use yii\widgets\ListView;
 /** @var app\models\BookSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-
 ?>
 
 <?php echo $this->render('_index_header'); ?>
