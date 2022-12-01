@@ -46,10 +46,10 @@ $this->title = 'Booked Books';
                 'contentOptions' => ['style' => 'width:70px; white-space: normal;'],
             ],
             [
-                'label' => 'Ordering',
+                'label' => 'Fast taking',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Html::a(Html::encode('Order '. $data['book']['title']),
+                    return Html::a(Html::encode('Order now'. $data['book']['title']),
                         ['taken-books/create', 'id' => $data['id']], ['data' => [
                                 'method' => 'post',
                                 'confirm' => 'Are you sure you want to order the books?',
@@ -61,5 +61,13 @@ $this->title = 'Booked Books';
         'summary' => '',
 
     ]); ?>
+
+    <?php
+        if (Yii::$app->user->identity->isAdminOrLibrarian()) {
+            echo Html::a('Add to cart', ['add-to-cart'], ['data' => [
+                'method' => 'post',
+            ], 'class' => 'btn btn-danger', 'id' => 'add-btn']);
+        }
+    ?>
 
 </div>

@@ -178,6 +178,13 @@ class UserController extends Controller
 
     public function actionClear() {
         if ($this->request->isPost) {
+            foreach ($_SESSION['cart'][$_SESSION['selected_user']] as $key => $value) {
+                if (array_key_exists('booked_books_id', $value)) {
+                    $book = Book::find()->where(['id' => $value['book_id']])->one();
+                    $book->available_books += $value['amount'];
+                    $book->save();
+                }
+            }
             unset($_SESSION['cart'][$_SESSION['selected_user']]);
             unset($_SESSION['selected_user']);
             return $this->redirect('index');
@@ -242,7 +249,12 @@ class UserController extends Controller
                         $model->user_id = $key;
 
                         if ($model->book->available_books >= $model->amount) {
-                            $model->book->available_books -= $model->amount;
+                            if (isset($value['booked_books_id'])) {
+                                $model->booked_books_id = $value['booked_books_id'];
+                            } else {
+                                $model->book->available_books -= $model->amount;
+                            }
+
                             if ($model->book->save() && $model->save()) {
                                 Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
                                     . ' amount of ' . $model->amount);

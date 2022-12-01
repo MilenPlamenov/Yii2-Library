@@ -4,8 +4,11 @@ namespace app\controllers;
 
 use app\models\BookedBooks;
 use app\models\BookedBooksSearch;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -27,12 +30,19 @@ class BookedBooksController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['create', 'view', 'index'],
+                    'only' => ['create', 'view', 'index', 'add-to-cart'],
                     'rules' => [
                         [
                             'actions' => ['create', 'view', 'index', 'update'],
                             'allow' => true,
                             'roles' => ['@'], // @ for auth users ? for guest users
+                        ],
+                        [
+                            'actions' => ['add-to-cart'],
+                            'allow' => true,
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->identity->isAdminOrLibrarian();
+                            }
                         ],
                     ],
                 ],
@@ -40,6 +50,7 @@ class BookedBooksController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'add-to-cart' => ['POST'],
                     ],
                 ],
             ]
@@ -56,6 +67,12 @@ class BookedBooksController extends Controller
         $searchModel = new BookedBooksSearch();
         if (!Yii::$app->user->identity->isAdminOrLibrarian()) {
             $searchModel->user_id = Yii::$app->user->identity->id;
+        } else {
+            if (isset($_SESSION['selected_user'])) {
+                $searchModel->user_id = $_SESSION['selected_user'];
+            } else {
+                throw new BadRequestHttpException('Please select user first !');
+            }
         }
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -163,6 +180,29 @@ class BookedBooksController extends Controller
             return $this->redirect(['index']);
         }
         throw new ForbiddenHttpException('You dont have permission to perform this action!');
+    }
+
+    public function actionAddToCart() {
+        if ($this->request->isPost) {
+            $user = User::find()->where(['id' => $_SESSION['selected_user']]);
+            $booked_books = BookedBooks::find()
+                ->where(['user_id' => $_SESSION['selected_user']])
+                ->andWhere(['ordered' => 0])->all();
+            if (!isset($_SESSION['cart'])) {
+                $_SESSION['cart'] = [];
+            }
+            foreach ($booked_books as $key => $value){
+                $items = [];
+                $items += ['book_id' => $value['attributes']['book_id']];
+                $items += ['amount' => $value['attributes']['amount']];
+                $items += ['booked_books_id' => $value['attributes']['id']];
+                $value->ordered = 1;
+                $value->save();
+                $_SESSION['cart'][$_SESSION['selected_user']][] = $items;
+            }
+            return $this->redirect(Url::toRoute(['user/cart']));
+
+        }
     }
 
     /**

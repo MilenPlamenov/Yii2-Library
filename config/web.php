@@ -43,6 +43,9 @@ $config = [
                 ],
             ],
         ],
+        'session' => [
+            'timeout' => 3600 * 4,
+        ],
         'db' => $db,
         
         'urlManager' => [

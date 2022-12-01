@@ -24,7 +24,8 @@ use yii\widgets\Pjax;
                                 <?= Book::find()->where(['id' => $book_and_amount_array['book_id']])->one()->description ?>
                             </p>
                             <h5 class="text-decoration-underline">Order
-                                for: <?= User::find()->where(['id' => $user_id])->one()->email ?></h5>
+                                for: <?= User::find()->where(['id' => $user_id])->one()->email ?>
+                            <?= isset($book_and_amount_array['booked_books_id']) ? '(booked)' : '' ?></h5>
                             <?php Pjax::begin() ?>
                             <?= $this->render('_buttons', ['user_id' => $user_id,
                                 'book_and_amount_array' => $book_and_amount_array,
