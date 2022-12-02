@@ -15,6 +15,5 @@ $this->title = 'Add Book';
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-    
 
 </div>

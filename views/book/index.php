@@ -1,11 +1,7 @@
 <?php
-
-use app\models\Book;
-use yii\data\ActiveDataProvider;
-use yii\grid\GridView;
+use app\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\ActionColumn;
 use yii\widgets\LinkSorter;
 use yii\widgets\ListView;
 
@@ -24,6 +20,16 @@ use yii\widgets\ListView;
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     </div>
 
+    <?php
+        if (isset($_SESSION['selected_user'])) {
+            $user = User::find()->where(['id' => $_SESSION['selected_user']])->one()->email;
+            echo '<h4 class="text-decoration-underline">Selected User:'. Html::a($user,
+                                                        [Url::toRoute(['user/currently-taken-books',
+                                                            'id' => User::find()
+                                                                ->where(['id' => $_SESSION['selected_user']])->one()->id])])
+                                                                    . '</h4>';
+        }
+    ?>
     <div id="sort-div">
         <h3>Sort the books base on (title, author or year)</h3>
         <?= LinkSorter::widget([

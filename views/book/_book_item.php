@@ -4,6 +4,7 @@
 use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
+use yii\helpers\Url;
 
 ?>
 
@@ -11,7 +12,6 @@ use yii\helpers\StringHelper;
     'title' => 'Add live record',
     'id' => 'modal',
     'size' => 'modal-lg',
-
 ]);
 
 echo "<div id='modelContent'></div>";
@@ -22,7 +22,8 @@ Modal::end()
 
 <div class="container d-flex shadow p-3 mt-4">
     <div class="col-lg-2 col-sm-4 col">
-        <img alt="book-img" class="img-fluid" src="<?= Yii::getAlias('@bookImgUrl') . '/'. $model->front_photo ?>">
+        <img alt="book-img" class="img-fluid"
+             src="<?= Yii::getAlias('@bookImgUrl') . '/'. $model->front_photo ?>">
     </div>
     <div class="col-lg-10 col-sm-8 m-4 p-1">
         <h1><?= $model->title ?> (<?= $model->isbn ?>)</h1>
@@ -36,7 +37,8 @@ Modal::end()
                 if(!Yii::$app->user->isGuest) {
                     echo Html::a('Preview', ['view', 'id' => $model->id], ['class' => 'btn btn-primary btn-lg m-2']);
                     if(Yii::$app->user->identity->isAdminOrLibrarian()) {
-                        echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-outline-primary btn-lg m-2']);
+                        echo Html::a('Update', ['update', 'id' => $model->id],
+                                    ['class' => 'btn btn-outline-primary btn-lg m-2']);
                         echo Html::a('Delete', ['delete', 'id' => $model->id], [
                             'class' => 'btn btn-outline-danger btn-lg m-2',
                             'data' => [
@@ -45,12 +47,15 @@ Modal::end()
                             ],
                         ]);
                         if (isset($_SESSION['selected_user']) and $model->available_books){
-                            echo Html::a('Add to cart', [\yii\helpers\Url::toRoute(['user/add-live-record']), 'book_id' => $model->id],
-                                ['class' => 'update-modal-link btn btn-danger btn-lg']);
+                            echo Html::a('Add to cart', [Url::toRoute(['user/add-live-record']),
+                                                                'book_id' => $model->id],
+                                                                ['class' => 'update-modal-link btn btn-danger btn-lg']);
                         }
                     } else {
-                        echo $model->available_books ? Html::a('Bookmark', ['booked-books/create', 'id' => $model->id], ['class' => 'btn btn-warning btn-lg']) : '';
-
+                        echo $model->available_books ? Html::a('Bookmark',
+                            ['booked-books/create', 'id' => $model->id],
+                            ['class' => 'btn btn-warning btn-lg'])
+                            : '';
                     }
                 }
             ?>

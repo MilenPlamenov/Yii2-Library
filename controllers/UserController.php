@@ -207,8 +207,6 @@ class UserController extends Controller
                             }
 
                             $model->book->available_books -= $value['amount'];
-                            error_log(json_encode($value['amount'])."\n", 3, "milen.txt");
-                            error_log(json_encode($model->amount)."\n", 3, "milen.txt");
                             $model->amount = $value['amount'];
 
                             if ($model->book->save() && $model->save()) {

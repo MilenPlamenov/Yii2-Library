@@ -15,8 +15,10 @@ $this->title = $model->title;
 <section class="py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
-            <div class="col-md-4 col-lg-4"><img class="card-img-top mb-5 mb-md-0 img-fluid" src="<?= Yii::getAlias('@bookImgUrl') . '/'. $model->front_photo ?>" alt="..." /></div>
-            <div class="col-md-4 col-lg-4"><img class="card-img-top mb-5 mb-md-0 img-fluid" src="<?= Yii::getAlias('@bookImgUrl') . '/'. $model->rear_photo ?>" alt="..." /></div>
+            <div class="col-md-4 col-lg-4"><img class="card-img-top mb-5 mb-md-0 img-fluid" src="
+                                <?= Yii::getAlias('@bookImgUrl') . '/'. $model->front_photo ?>" alt="..." /></div>
+            <div class="col-md-4 col-lg-4"><img class="card-img-top mb-5 mb-md-0 img-fluid" src="
+                                 <?= Yii::getAlias('@bookImgUrl') . '/'. $model->rear_photo ?>" alt="..." /></div>
 
             <div class="col-md-4 col-lg-4">
                 <div class="small mb-1">ISBN: <?= $model->isbn ?></div>
