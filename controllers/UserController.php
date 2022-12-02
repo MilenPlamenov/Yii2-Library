@@ -8,9 +8,7 @@ use app\models\TakenBooks;
 use app\models\TakenBooksSearch;
 use app\models\User;
 use app\models\UserSearch;
-use Codeception\Constraint\Page;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -18,9 +16,6 @@ use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * UserController implements the CRUD actions for User model.
- */
 class UserController extends Controller
 {
     /**
@@ -95,7 +90,6 @@ class UserController extends Controller
 
         }
     }
-
 
     public function actionAddAmount($user_id, $item_id)
     {

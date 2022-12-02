@@ -94,7 +94,7 @@ class TakenBooksController extends Controller
 
     public function actionDelayList() {
         $searchModel = new TakenBooksSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams, null, null, 'das');
+        $dataProvider = $searchModel->search($this->request->queryParams, null, null, '< NOW()');
 
 
         return $this->render('delay-list', [
@@ -136,7 +136,6 @@ class TakenBooksController extends Controller
         $model->booked_books_id = Yii::$app->request->get('id');
 
         $model->bookedBooks->ordered = true;
-
         $model->user_id = $model->bookedBooks->user_id;
         $model->book_id = $model->bookedBooks->book_id;
         $model->amount = $model->bookedBooks->amount;
@@ -169,10 +168,9 @@ class TakenBooksController extends Controller
 
                 return $this->redirect(['user/currently-taken-books', 'id' => $model->user_id]);
             } else {
-                Yii::$app->session->setFlash('error', "Something went wrong!");
+                throw new BadRequestHttpException('Something went wrong!');
             }
         }
-
         return $this->render('part-time-return', [
             'model' => $model,
         ]);
@@ -190,7 +188,6 @@ class TakenBooksController extends Controller
     public function actionDelete($taking_id)
     {
         $this->findModel($taking_id)->delete();
-
         return $this->redirect(['index']);
     }
 
@@ -207,7 +204,6 @@ class TakenBooksController extends Controller
         if (($model = TakenBooks::findOne(['taking_id' => $taking_id])) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

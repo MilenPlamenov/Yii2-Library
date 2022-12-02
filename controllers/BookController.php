@@ -79,7 +79,6 @@ class BookController extends Controller
      */
     public function actionView($id)
     {
-
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -101,11 +100,9 @@ class BookController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-
     public function actionCreate()
     {
         $model = new Book();
-
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $this->uploadPhoto($model, 'front_photo');

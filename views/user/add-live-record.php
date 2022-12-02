@@ -12,7 +12,7 @@ $this->title = 'Live taking for user: ' . $user->email;
 ?>
 
 <div class="taken-books-form">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
     <?= Html::a(
         'Currently taken books',
         ['currently-taken-books', 'id' => $user->id],
@@ -64,7 +64,7 @@ $('form#{$user->formName()}').on('beforeSubmit', function(e){
             //     $("#message").html(result.message);
             // }
             $('<h4/>',{
-                text: 'Make sure that the book ID exist and there are enough books!',
+                text: 'Make sure that there are enough books!',
                 class: 'text-danger'
             }).appendTo("#modelContent");
         }

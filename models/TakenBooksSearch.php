@@ -61,7 +61,7 @@ class TakenBooksSearch extends TakenBooks
         }
 
         if ($delay !== null) {
-            $query->andWhere("date_for_return < NOW()");
+            $query->andWhere("date_for_return $delay");
         }
 
         // add conditions that should always apply here
