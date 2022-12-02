@@ -49,7 +49,7 @@ $this->title = 'Booked Books';
                 'label' => 'Fast taking',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Html::a(Html::encode('Order now'. $data['book']['title']),
+                    return Html::a(Html::encode('Order now '. $data['book']['title']),
                         ['taken-books/create', 'id' => $data['id']], ['data' => [
                                 'method' => 'post',
                                 'confirm' => 'Are you sure you want to order the books?',

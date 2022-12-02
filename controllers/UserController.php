@@ -75,45 +75,6 @@ class UserController extends Controller
         ]);
     }
 
-//    public function actionAddLiveRecord($user_id) {
-//        $model = new TakenBooks();
-//
-//        $model->user_id = $user_id;
-//
-//        if ($this->request->isPost) {
-//            if ($model->load($this->request->post())) {
-//                $model->amount = Yii::$app->request->post()['TakenBooks']['amount'];
-//                $model->book_id = Yii::$app->request->post()['TakenBooks']['book_id'];
-//                if ($model->amount > 0 && $model->book->available_books >= $model->amount) {
-//                    $model->book->available_books -= $model->amount;
-//                    if ($model->book->save() && $model->save()) {
-//                        Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title
-//                            . ' amount of ' . $model->amount);
-//                        Yii::$app->session->set('taking'. $model->taking_id, $model->attributes);
-//                        return $this->redirect(['add-live-record', 'user_id' => $model->user_id]);
-//                    }
-//                } else {
-//                    Yii::$app->session->setFlash('error', 'Invalid data!');
-//                    $model->loadDefaultValues();
-//                }
-//            }
-//        }
-//        return $this->render('add-live-record', [
-//            'model' => $model,
-//            ]);
-//    }
-
-    public function anyItemsLeft()
-    {
-        $any_items = false;
-        foreach ($_SESSION as $key => $value) {
-            if (strlen($key) == 12) {
-                $any_items = true;
-                break;
-            }
-        }
-        return $any_items;
-    }
 
     public function actionRemoveFromCart($user_id, $item_id)
     {
@@ -178,13 +139,6 @@ class UserController extends Controller
 
     public function actionClear() {
         if ($this->request->isPost) {
-            foreach ($_SESSION['cart'][$_SESSION['selected_user']] as $key => $value) {
-                if (array_key_exists('booked_books_id', $value)) {
-                    $book = Book::find()->where(['id' => $value['book_id']])->one();
-                    $book->available_books += $value['amount'];
-                    $book->save();
-                }
-            }
             unset($_SESSION['cart'][$_SESSION['selected_user']]);
             unset($_SESSION['selected_user']);
             return $this->redirect('index');
@@ -245,15 +199,17 @@ class UserController extends Controller
                     foreach ($items as $idx => $value) {
                         $model = new TakenBooks();
                         $model->book_id = $value['book_id'];
-                        $model->amount = $value['amount'];
                         $model->user_id = $key;
 
-                        if ($model->book->available_books >= $model->amount) {
+                        if ($model->book->available_books >= $value['amount']) {
                             if (isset($value['booked_books_id'])) {
                                 $model->booked_books_id = $value['booked_books_id'];
-                            } else {
-                                $model->book->available_books -= $model->amount;
                             }
+
+                            $model->book->available_books -= $value['amount'];
+                            error_log(json_encode($value['amount'])."\n", 3, "milen.txt");
+                            error_log(json_encode($model->amount)."\n", 3, "milen.txt");
+                            $model->amount = $value['amount'];
 
                             if ($model->book->save() && $model->save()) {
                                 Yii::$app->session->setFlash('success', 'Successfully ordered ' . $model->book->title

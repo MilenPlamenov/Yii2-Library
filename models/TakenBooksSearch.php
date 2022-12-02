@@ -17,6 +17,9 @@ class TakenBooksSearch extends TakenBooks
     public $isbn;
     public $first_name;
     public $last_name;
+    public $email;
+    public $telephone_number;
+
     /**
      * {@inheritdoc}
      */
@@ -24,7 +27,7 @@ class TakenBooksSearch extends TakenBooks
     {
         return [
             [['taking_id', 'user_id', 'book_id', 'booked_books_id', 'amount', 'returned'], 'integer'],
-            [['taken_date', 'returned_date', 'date_for_return', 'title', 'author', 'isbn', 'first_name', 'last_name'], 'safe'],
+            [['taken_date', 'returned_date', 'date_for_return', 'title', 'author', 'isbn', 'first_name', 'last_name', 'email', 'telephone_number'], 'safe'],
         ];
     }
 
@@ -44,7 +47,7 @@ class TakenBooksSearch extends TakenBooks
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $user_id=null, $returned=null)
+    public function search($params, $user_id=null, $returned=null, $delay=null)
     {
         $query = TakenBooks::find()
             ->joinWith('user')
@@ -57,6 +60,10 @@ class TakenBooksSearch extends TakenBooks
             $query->andWhere("returned=$returned");
         }
 
+        if ($delay !== null) {
+            $query->andWhere("date_for_return < NOW()");
+        }
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -65,7 +72,7 @@ class TakenBooksSearch extends TakenBooks
 
 
         $dataProvider->setSort([
-            'defaultOrder' => ['taken_date'=>SORT_DESC],
+            'defaultOrder' => ['date_for_return' => SORT_ASC],
             'attributes' => [
                 'taking_id',
                 'title',
@@ -73,6 +80,8 @@ class TakenBooksSearch extends TakenBooks
                 'isbn',
                 'first_name',
                 'last_name',
+                'email',
+                'telephone_number',
                 'amount',
                 'taken_date',
                 'returned',
@@ -107,7 +116,9 @@ class TakenBooksSearch extends TakenBooks
             ->andFilterWhere(['like', 'book.author', $this->author])
             ->andFilterWhere(['like', 'book.isbn', $this->isbn])
             ->andFilterWhere(['like', 'user.first_name', $this->first_name])
-            ->andFilterWhere(['like', 'user.last_name', $this->last_name]);
+            ->andFilterWhere(['like', 'user.last_name', $this->last_name])
+            ->andFilterWhere(['like', 'user.email', $this->email])
+            ->andFilterWhere(['like', 'user.telephone_number', $this->telephone_number]);
         return $dataProvider;
     }
 }

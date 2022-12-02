@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Book;
 use app\models\BookedBooks;
 use app\models\BookedBooksSearch;
 use app\models\User;
@@ -192,11 +193,14 @@ class BookedBooksController extends Controller
                 $_SESSION['cart'] = [];
             }
             foreach ($booked_books as $key => $value){
+                $book = Book::find()->where(['id' => $value['attributes']['book_id']])->one();
+                $book->available_books += $value['attributes']['amount'];
                 $items = [];
                 $items += ['book_id' => $value['attributes']['book_id']];
                 $items += ['amount' => $value['attributes']['amount']];
                 $items += ['booked_books_id' => $value['attributes']['id']];
                 $value->ordered = 1;
+                $book->save();
                 $value->save();
                 $_SESSION['cart'][$_SESSION['selected_user']][] = $items;
             }

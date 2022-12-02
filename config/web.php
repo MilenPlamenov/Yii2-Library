@@ -23,7 +23,9 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'authTimeout' => 1440,
+            'loginUrl' => 'http://localhost:5000/site/login',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -42,9 +44,6 @@ $config = [
                     'levels' => ['error', 'warning'],
                 ],
             ],
-        ],
-        'session' => [
-            'timeout' => 3600 * 4,
         ],
         'db' => $db,
         

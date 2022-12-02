@@ -35,7 +35,6 @@ Modal::end()
             <?php
                 if(!Yii::$app->user->isGuest) {
                     echo Html::a('Preview', ['view', 'id' => $model->id], ['class' => 'btn btn-primary btn-lg m-2']);
-                    echo $model->available_books ? Html::a('Bookmark', ['booked-books/create', 'id' => $model->id], ['class' => 'btn btn-warning btn-lg']) : '';
                     if(Yii::$app->user->identity->isAdminOrLibrarian()) {
                         echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-outline-primary btn-lg m-2']);
                         echo Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -49,6 +48,9 @@ Modal::end()
                             echo Html::a('Add to cart', [\yii\helpers\Url::toRoute(['user/add-live-record']), 'book_id' => $model->id],
                                 ['class' => 'update-modal-link btn btn-danger btn-lg']);
                         }
+                    } else {
+                        echo $model->available_books ? Html::a('Bookmark', ['booked-books/create', 'id' => $model->id], ['class' => 'btn btn-warning btn-lg']) : '';
+
                     }
                 }
             ?>

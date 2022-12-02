@@ -6,6 +6,7 @@ use app\models\TakenBooks;
 use app\models\TakenBooksSearch;
 use DateTime;
 use Yii;
+use yii\db\Query;
 use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\web\BadRequestHttpException;
@@ -29,10 +30,10 @@ class TakenBooksController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['create', 'view', 'index', 'update', 'return'],
+                    'only' => ['create', 'view', 'index', 'update', 'return', 'delay-list'],
                     'rules' => [
                         [
-                            'actions' => ['create', 'view', 'update', 'return'],
+                            'actions' => ['create', 'view', 'update', 'return', 'delay-list'],
                             'allow' => true,
                             'roles' => ['@'], // @ for auth users ? for guest users
                             'matchCallback' => function ($rule, $action) {
@@ -88,6 +89,17 @@ class TakenBooksController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($taking_id),
+        ]);
+    }
+
+    public function actionDelayList() {
+        $searchModel = new TakenBooksSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, null, null, 'das');
+
+
+        return $this->render('delay-list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
