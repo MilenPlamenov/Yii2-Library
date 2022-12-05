@@ -70,7 +70,10 @@ $this->title = 'Booked Books';
             if ($bb) {
                 echo Html::a('Add to cart', ['add-to-cart'], ['data' => [
                     'method' => 'post',
-                ], 'class' => 'btn btn-danger', 'id' => 'add-btn']);
+                ], 'class' => 'btn btn-primary m-2', 'id' => 'add-btn']);
+                echo Html::a('Clear all bookings', ['clear-bookings', 'user_id' => Yii::$app->session->get('selected_user')], ['data' => [
+                    'method' => 'post',
+                ], 'class' => 'btn btn-danger', 'id' => 'clear-bookings-btn']);
             }
         }
     ?>

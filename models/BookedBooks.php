@@ -13,10 +13,27 @@ use Yii;
  * @property int $amount
  * @property string $booked_date
  * @property int|null $ordered
- *
  * @property Book $book
  * @property User $user
  */
+
+//[
+//    $userID => [
+//        [
+//            'bookid' => 3
+//            'amount'=> 5
+//        ],
+//        [
+//            'bookid' => 4
+//            'amount' => 2
+//        ]
+//    ]
+//]
+//if(!isset(cart[$userID][$bookid])){
+//    =0
+//}
+//cart[$userID][41] += $amount
+
 class BookedBooks extends \yii\db\ActiveRecord
 {
     /**

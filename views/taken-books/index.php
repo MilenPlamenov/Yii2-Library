@@ -12,7 +12,7 @@ use yii\grid\GridView;
 
 $this->title = 'Taken Books History';
 ?>
-<div class="taken-books-index">
+<div class="taken-books-index d-none d-sm-block">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

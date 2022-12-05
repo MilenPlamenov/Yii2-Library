@@ -31,7 +31,7 @@ class BookedBooksController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['create', 'view', 'index', 'add-to-cart'],
+                    'only' => ['create', 'view', 'index', 'add-to-cart', 'clear-bookings'],
                     'rules' => [
                         [
                             'actions' => ['create', 'view', 'index', 'update'],
@@ -39,7 +39,7 @@ class BookedBooksController extends Controller
                             'roles' => ['@'], // @ for auth users ? for guest users
                         ],
                         [
-                            'actions' => ['add-to-cart'],
+                            'actions' => ['add-to-cart', 'clear-bookings'],
                             'allow' => true,
                             'matchCallback' => function ($rule, $action) {
                                 return Yii::$app->user->identity->isAdminOrLibrarian();
@@ -65,14 +65,16 @@ class BookedBooksController extends Controller
      */
     public function actionIndex()
     {
+//        $booked_books = BookedBooks::find()->where(['user_id' => Yii::$app->session->get('selected_user')])->andWhere(['ordered' => 0])->all();
+//        foreach ($booked_books as $key => $value) {
+//            var_export($value['attributes']);
+//        }
         $searchModel = new BookedBooksSearch();
         if (!Yii::$app->user->identity->isAdminOrLibrarian()) {
             $searchModel->user_id = Yii::$app->user->identity->id;
         } else {
             if (isset($_SESSION['selected_user'])) {
                 $searchModel->user_id = $_SESSION['selected_user'];
-            } else {
-                throw new BadRequestHttpException('Please select user first !');
             }
         }
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -170,7 +172,6 @@ class BookedBooksController extends Controller
      */
     public function actionDelete($id)
     {
-
         $model = $this->findModel($id);
         if ($model->user->id == Yii::$app->user->identity->id or Yii::$app->user->identity->isAdminOrLibrarian()) {
 
@@ -206,6 +207,19 @@ class BookedBooksController extends Controller
             }
             return $this->redirect(Url::toRoute(['user/cart']));
 
+        }
+    }
+
+    public function actionClearBookings($user_id) {
+        $booked_books = BookedBooks::find()
+            ->where(['user_id' => $user_id])
+            ->andWhere(['ordered' => 0])->all();
+        foreach ($booked_books as $key => $value){
+            $model = $this->findModel($value['attributes']['id']);
+            $model->book->available_books += $model->amount;
+            $model->book->save();
+            $model->delete();
+            $this->redirect('index');
         }
     }
 

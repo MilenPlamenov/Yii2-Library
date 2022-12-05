@@ -49,8 +49,7 @@ class RegisterForm extends Model
         if($user->save()) {
             return true;
         }
-
-//        Yii::error("Please make sure you filled the form properly!");
+        Yii::$app->session->setFlash('error', 'Invalid data');
         return false;
     }
 }

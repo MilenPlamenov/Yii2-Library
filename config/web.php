@@ -27,6 +27,12 @@ $config = [
             'authTimeout' => 1440,
             'loginUrl' => 'http://localhost:5000/site/login',
         ],
+        'session'=>[
+            'class' => 'yii\web\Session',
+            'cookieParams' => ['httponly' => true, 'lifetime' => 1440],
+            'timeout' => 1440,
+            'useCookies' => true
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
