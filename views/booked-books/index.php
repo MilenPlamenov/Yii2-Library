@@ -59,6 +59,12 @@ $this->title = 'Booked Books';
             ],
         ],
         'summary' => '',
+        'pager' => [
+            'linkContainerOptions' => ['class' => 'page-item'],
+            'linkOptions' => ['class' => 'page-link'],
+            'disabledPageCssClass' => ['class' => 'page-link'],
+            'options' => ['class' => 'pagination justify-content-center']
+        ],
 
     ]); ?>
 

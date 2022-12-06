@@ -49,5 +49,11 @@ use yii\widgets\ListView;
         'dataProvider' => $dataProvider,
         'itemView' => '_book_item',
         'summary' => '',
+        'pager' => [
+            'linkContainerOptions' => ['class' => 'page-item'],
+            'linkOptions' => ['class' => 'page-link'],
+            'disabledPageCssClass' => ['class' => 'page-link'],
+            'options' => ['class' => 'pagination justify-content-center']
+        ],
     ]) ?>
 </div>

@@ -79,6 +79,7 @@ class TakenBooksSearch extends TakenBooks
         } else {
             $dataProvider = new ActiveDataProvider([
                 'query' => $query,
+
             ]);
         }
 
