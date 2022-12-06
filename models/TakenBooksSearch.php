@@ -69,10 +69,18 @@ class TakenBooksSearch extends TakenBooks
 
         // add conditions that should always apply here
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
+        if ($delay !== null) {
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 200,
+                ],
+            ]);
+        } else {
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+            ]);
+        }
 
         $dataProvider->setSort([
             'defaultOrder' => ['date_for_return' => SORT_ASC],

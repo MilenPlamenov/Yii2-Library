@@ -35,7 +35,6 @@ $this->title = 'Delaying books';
         'options' => [
             'class' => 'table-responsive',
         ],
-
         'dataProvider' => $dataProviderReturned,
         'columns' => [
             [
