@@ -26,6 +26,7 @@ class AppAsset extends AssetBundle
     public $js = [
         'js/modal.js',
         'js/search-and-sort.js',
+        'js/delaying-books.js',
     ];
 
     public $depends = [

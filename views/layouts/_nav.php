@@ -33,15 +33,15 @@ echo Nav::widget([
 
         !Yii::$app->user->isGuest ? (
         Yii::$app->user->identity->isAdminOrLibrarian() ?
-            (['label' => 'Add Book', 'url' => ['/book/create']])
-            :
-            ['label' => 'View Account', 'url' => ['user/view', 'id' => Yii::$app->user->identity->id]]) : '',
-
-        !Yii::$app->user->isGuest ? (
-        Yii::$app->user->identity->isAdminOrLibrarian() ?
             (['label' => 'Delay List', 'url' => ['/taken-books/delay-list']])
             :
             '') : '',
+
+        !Yii::$app->user->isGuest ? (
+        Yii::$app->user->identity->isAdminOrLibrarian() ?
+            (['label' => 'Add Book', 'url' => ['/book/create']])
+            :
+            ['label' => 'View Account', 'url' => ['user/view', 'id' => Yii::$app->user->identity->id]]) : '',
 
         !Yii::$app->user->isGuest ? (
         Yii::$app->user->identity->isAdminOrLibrarian() ?

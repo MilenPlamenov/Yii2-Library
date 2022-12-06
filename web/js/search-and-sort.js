@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     $("#search-div").hide();
     $("#sort-div").hide();

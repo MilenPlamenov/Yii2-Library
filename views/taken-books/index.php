@@ -65,6 +65,7 @@ $this->title = 'Taken Books History';
             ],
             [
                 'attribute' => 'returned',
+                'filter' => [ "1"=>"Returned", "0"=>"Not Returned"],
                 'value' => function ($model) {
                     return $model->returned === 1 ? 'Returned' : 'Not returned yet';
                 }

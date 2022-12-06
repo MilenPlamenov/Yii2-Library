@@ -61,7 +61,10 @@ class TakenBooksSearch extends TakenBooks
         }
 
         if ($delay !== null) {
-            $query->andWhere("date_for_return $delay");
+            if ($delay === 'amount') {
+                $query->addOrderBy(['amount' => SORT_DESC]);
+            }
+            $query->andWhere("date_for_return < NOW()");
         }
 
         // add conditions that should always apply here
