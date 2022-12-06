@@ -40,17 +40,20 @@ $this->title = 'Delaying books';
             [
                 'label' => 'Name',
                 'attribute' => 'first_name',
-                'value' => fn($data) => $data->user->first_name,
+                'format' => 'raw',
+                'value' => fn($data) => Html::a($data->user->first_name, [
+                        Url::toRoute(['user/currently-taken-books', 'id' => $data->user->id])]
+                )
                 //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
-                'label' => 'User email',
+                'label' => 'Email',
                 'attribute' => 'email',
                 'value' => fn($data) => $data->user->email,
                 //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
-                'label' => 'User phone',
+                'label' => 'Phone',
                 'attribute' => 'telephone_number',
                 'value' => fn($data) => $data->user->telephone_number,
                 //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
@@ -87,17 +90,20 @@ $this->title = 'Delaying books';
             [
                 'label' => 'Name',
                 'attribute' => 'first_name',
-                'value' => fn($data) => $data->user->first_name,
+                'format' => 'raw',
+                'value' => fn($data) => Html::a($data->user->first_name, [
+                        Url::toRoute(['user/currently-taken-books', 'id' => $data->user->id])]
+                )
                 //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
-                'label' => 'User email',
+                'label' => 'Email',
                 'attribute' => 'email',
                 'value' => fn($data) => $data->user->email,
                 //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
-                'label' => 'User phone',
+                'label' => 'Phone',
                 'attribute' => 'telephone_number',
                 'value' => fn($data) => $data->user->telephone_number,
                 //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
