@@ -23,7 +23,7 @@ use yii\widgets\ListView;
     <?php
         if (isset($_SESSION['selected_user'])) {
             $user = User::find()->where(['id' => $_SESSION['selected_user']])->one()->email;
-            echo '<h4 class="text-decoration-underline">Selected User:'. Html::a($user,
+            echo '<h4>Selected User:'. Html::a($user,
                                                         [Url::toRoute(['user/currently-taken-books',
                                                             'id' => User::find()
                                                                 ->where(['id' => $_SESSION['selected_user']])->one()->id])])

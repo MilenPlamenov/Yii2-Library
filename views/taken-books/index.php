@@ -26,6 +26,13 @@ $this->title = 'Taken Books History';
 
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'rowOptions' => function ($model) {
+            $date = new DateTime('now');
+            $targetDate = new DateTime($model->date_for_return);
+            if ($date > $targetDate) {
+                return ['class' => 'border border-danger'];
+            }
+        },
         'columns' => [
             [
                 'label' => 'User F Name',

@@ -70,6 +70,10 @@ class TakenBooksController extends Controller
         $searchModel = new TakenBooksSearch();
         if (!Yii::$app->user->identity->isAdminOrLibrarian()) {
             $searchModel->user_id = Yii::$app->user->identity->id;
+        } else {
+            if (isset($_SESSION['selected_user'])) {
+                $searchModel->user_id = $_SESSION['selected_user'];
+            }
         }
         $dataProvider = $searchModel->search($this->request->queryParams);
 

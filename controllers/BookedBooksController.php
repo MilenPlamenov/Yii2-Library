@@ -193,17 +193,32 @@ class BookedBooksController extends Controller
             if (!isset($_SESSION['cart'])) {
                 $_SESSION['cart'] = [];
             }
+            // not workin
             foreach ($booked_books as $key => $value){
                 $book = Book::find()->where(['id' => $value['attributes']['book_id']])->one();
                 $book->available_books += $value['attributes']['amount'];
-                $items = [];
-                $items += ['book_id' => $value['attributes']['book_id']];
-                $items += ['amount' => $value['attributes']['amount']];
-                $items += ['booked_books_id' => $value['attributes']['id']];
+                $hasAlready = false;
+                foreach ($_SESSION['cart'][$_SESSION['selected_user']] as $idx => $items_ll) {
+                    if ($items_ll['book_id'] == $book->id) {
+                        if ($value['attributes']['amount'] + $items_ll['amount'] <= $book->available_books) {
+                            $_SESSION['cart'][$_SESSION['selected_user']][$idx]['amount'] += $value['attributes']['amount'];
+                        }
+                        $hasAlready = true;
+                        break;
+                    }
+                }
+
+                if (!$hasAlready) {
+                    $items = [];
+                    $items += ['book_id' => $value['attributes']['book_id']];
+                    $items += ['amount' => $value['attributes']['amount']];
+                    $items += ['booked_books_id' => $value['attributes']['id']];
+                    $_SESSION['cart'][$_SESSION['selected_user']][] = $items;
+
+                }
                 $value->ordered = 1;
                 $book->save();
                 $value->save();
-                $_SESSION['cart'][$_SESSION['selected_user']][] = $items;
             }
             return $this->redirect(Url::toRoute(['user/cart']));
 

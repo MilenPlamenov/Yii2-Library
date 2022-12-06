@@ -58,13 +58,24 @@ $('form#{$user->formName()}').on('beforeSubmit', function(e){
             // }else{
             //     $(document).find('#modalPopup3').modal('hide');
             // }
-        }else{
+        } else if(result == 2) {
+            $(\$form).trigger("reset");
+            $('<h4/>',{
+                text: 'Successfully extended item count in the cart',
+                class: 'text-success'
+            }).appendTo("#modelContent");
+        } else if(result == 3) {
+            $('<h4/>',{
+                text: 'Amount overflow !!',
+                class: 'text-danger'
+            }).appendTo("#modelContent");
+        } else{
             // $(\$form).trigger("reset");
             // if($('#modalReportButton').length){
             //     $("#message").html(result.message);
             // }
             $('<h4/>',{
-                text: 'Make sure that there are enough books!',
+                text: 'Make sure that there are enough books and you type positive number !',
                 class: 'text-danger'
             }).appendTo("#modelContent");
         }

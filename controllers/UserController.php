@@ -161,8 +161,19 @@ class UserController extends Controller
             if ($book) {
                 $amount = Yii::$app->request->post()['User']['amount'];
                 if ($amount > 0 && $book->available_books >= $amount) {
-                    $items += Yii::$app->request->post()['User'];
+                    foreach ($_SESSION['cart'][$_SESSION['selected_user']] as $key => $value) {
+                        if ($value['book_id'] == $book_id) {
+                            if ($_SESSION['cart'][$_SESSION['selected_user']][$key]['amount'] + $amount <= $book->available_books) {
+                                $_SESSION['cart'][$_SESSION['selected_user']][$key]['amount'] += $amount;
+                                return 2;
+                            } else {
+                                return 3;
+                            }
+                        }
+                    }
+                    $items += Yii::$app->request->post()['User']; // 'amount' => 1
                     $items += ['book_id' => $book_id];
+
                     if (!isset($_SESSION['cart'])) {
                         $_SESSION['cart'] = [];
                     }
