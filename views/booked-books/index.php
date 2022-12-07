@@ -70,22 +70,6 @@ $this->title = 'Booked Books';
 
     ]); ?>
 
-    <?php
-        if (Yii::$app->user->identity->isAdminOrLibrarian()) {
-            $bb = BookedBooks::find()
-                ->where(['user_id' => Yii::$app->session->get('selected_user')])
-                ->andWhere(['ordered' => 0])->one();
-            if ($bb) {
-                echo Html::a('Add to cart', ['add-to-cart'], ['data' => [
-                    'method' => 'post',
-                ], 'class' => 'btn btn-primary m-2', 'id' => 'add-btn']);
-                echo Html::a('Clear all bookings', ['clear-bookings', 'user_id' => Yii::$app->session->get('selected_user')], ['data' => [
-                    'method' => 'post',
-                ], 'class' => 'btn btn-danger', 'id' => 'clear-bookings-btn']);
-            }
-        }
-    ?>
-
 </div>
 
 <div class="booked-books-index-list d-flex container d-block d-sm-none">
@@ -104,3 +88,18 @@ $this->title = 'Booked Books';
         ]) ?>
     </div>
 </div>
+<?php
+if (Yii::$app->user->identity->isAdminOrLibrarian()) {
+    $bb = BookedBooks::find()
+        ->where(['user_id' => Yii::$app->session->get('selected_user')])
+        ->andWhere(['ordered' => 0])->one();
+    if ($bb) {
+        echo Html::a('Add to cart', ['add-to-cart'], ['data' => [
+            'method' => 'post',
+        ], 'class' => 'btn btn-primary m-2', 'id' => 'add-btn']);
+        echo Html::a('Clear all bookings', ['clear-bookings', 'user_id' => Yii::$app->session->get('selected_user')], ['data' => [
+            'method' => 'post',
+        ], 'class' => 'btn btn-danger', 'id' => 'clear-bookings-btn']);
+    }
+}
+?>

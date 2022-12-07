@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /** @var yii\web\View $this */
 /** @var app\models\TakenBooksSearch $searchModel */
@@ -14,23 +15,21 @@ use yii\grid\GridView;
 $this->title = 'Delaying books';
 ?>
 
-<div class="delay-books-index">
+<h1><?= Html::encode($this->title) ?></h1>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <button class="nav-link active" aria-current="page" id="returned-btn">Returned Sort</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="amount-btn">Amount Sort</button>
+    </li>
+</ul>
 
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <button class="nav-link active" aria-current="page" id="returned-btn">Returned Sort</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="amount-btn">Amount Sort</button>
-        </li>
-    </ul>
-
+<div id="returned-sort-grid">
     <?= GridView::widget([
         'tableOptions' => [
-            'class' => 'table table-striped text-center',
-            'id' => 'returned-sort-grid',
+            'class' => 'table table-striped text-center d-none d-sm-block',
         ],
         'options' => [
             'class' => 'table-responsive',
@@ -76,10 +75,28 @@ $this->title = 'Delaying books';
         'summary' => '',
     ]); ?>
 
+    <div class="returned-sort-list d-flex container d-block d-sm-none">
+        <div class="row">
+            <?= ListView::widget([
+                'dataProvider' => $dataProviderReturned,
+                'itemOptions' => ['class' => 'item'],
+                'summary' => '',
+                'itemView' => '_returned-sort_item',
+                'pager' => [
+                    'linkContainerOptions' => ['class' => 'page-item'],
+                    'linkOptions' => ['class' => 'page-link'],
+                    'disabledPageCssClass' => ['class' => 'page-link'],
+                    'options' => ['class' => 'pagination justify-content-center']
+                ],
+            ]) ?>
+        </div>
+    </div>
+</div>
+
+<div id="amount-sort-grid">
     <?= GridView::widget([
         'tableOptions' => [
-            'class' => 'table table-striped text-center',
-            'id' => 'amount-sort-grid',
+            'class' => 'table table-striped text-center d-none d-sm-block',
         ],
         'options' => [
             'class' => 'table-responsive',
@@ -125,5 +142,22 @@ $this->title = 'Delaying books';
         'summary' => '',
     ]); ?>
 
+
+    <div class="amount-sort-list d-flex container d-block d-sm-none">
+        <div class="row">
+            <?= ListView::widget([
+                'dataProvider' => $dataProviderAmount,
+                'itemOptions' => ['class' => 'item'],
+                'summary' => '',
+                'itemView' => '_amount-sort_item',
+                'pager' => [
+                    'linkContainerOptions' => ['class' => 'page-item'],
+                    'linkOptions' => ['class' => 'page-link'],
+                    'disabledPageCssClass' => ['class' => 'page-link'],
+                    'options' => ['class' => 'pagination justify-content-center']
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>
 

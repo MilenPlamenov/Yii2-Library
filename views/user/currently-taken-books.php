@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /** @var yii\web\View $this */
 /** @var app\models\TakenBooksSearch $searchModel */
@@ -10,10 +11,10 @@ use yii\grid\GridView;
 
 $this->title = 'Currently taken books for ' . $user->email;
 ?>
-<div class="currently-taken-books">
+<h1><?= Html::encode($this->title) ?></h1>
+<h3>*Note that all delay columns will be in <span class="text-danger">red color</span></h3>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <h3>*Note that all delay columns will be in <span class="text-danger">red color</span></h3>
+<div class="currently-taken-books d-none d-sm-block">
     <?= GridView::widget([
         'tableOptions' => [
             'class' => 'table table-striped text-center table-bordered',
@@ -83,6 +84,22 @@ $this->title = 'Currently taken books for ' . $user->email;
             'options' => ['class' => 'pagination justify-content-center']
         ],
     ]); ?>
+</div>
 
 
+<div class="currently-taken-books-list d-flex container d-block d-sm-none">
+    <div class="row">
+        <?= ListView::widget([
+            'dataProvider' => $dataProvider,
+            'itemOptions' => ['class' => 'item'],
+            'summary' => '',
+            'itemView' => '_currently_taken_books_item',
+            'pager' => [
+                'linkContainerOptions' => ['class' => 'page-item'],
+                'linkOptions' => ['class' => 'page-link'],
+                'disabledPageCssClass' => ['class' => 'page-link'],
+                'options' => ['class' => 'pagination justify-content-center']
+            ],
+        ]) ?>
+    </div>
 </div>

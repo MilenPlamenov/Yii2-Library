@@ -98,8 +98,8 @@ class TakenBooksController extends Controller
 
     public function actionDelayList() {
         $searchModel = new TakenBooksSearch();
-        $dataProviderReturned = $searchModel->search($this->request->queryParams, null, null, 'returned');
-        $dataProviderAmount = $searchModel->search($this->request->queryParams, null, null, 'amount');
+        $dataProviderReturned = $searchModel->search($this->request->queryParams, null, 0, 'returned');
+        $dataProviderAmount = $searchModel->search($this->request->queryParams, null, 0, 'amount');
 
         return $this->render('delay-list', [
             'searchModel' => $searchModel,
