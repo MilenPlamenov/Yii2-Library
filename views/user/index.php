@@ -38,34 +38,25 @@ $this->title = 'Users';
             ],
             [
                 'class' => ActionColumn::className(),
-                'template' => '{update} {view}',
+                'template' => '{select_user} {taken_books} {view} {update}',
                 'contentOptions' => ['style' => 'width: 8.7%'],
                 'urlCreator' => function ($action, User $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  },
-            ],
-            [
-                'label' => 'Taken Books',
-                'format' => 'raw',
-                'value' => function ($data) {
-                    return Html::a(Html::encode('Check out'),
-                        ['user/currently-taken-books', 'id' => $data['id']]);
-                },
-                'contentOptions' => ['style' => 'width: 11.7%'],
+                'buttons' => [
+                       'taken_books' => fn($url, $model) => Html::a('<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                      <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
+                      <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                    </svg>',
+                           ['user/currently-taken-books', 'id' => $model->id]),
+                    'select_user' => fn($url, $model) => Html::a('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16">
+                      <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
+                    </svg>',
+                        ['user/setup-add-live-record', 'user_id' => $model->id], ['data' => [
+                        'method' => 'post',
+                    ]])
 
-            ],
-            [
-                'label' => 'Live taking',
-                'format' => 'raw',
-                'value' => function ($data) {
-                    return Html::a(Html::encode('Select User'),
-                        ['user/setup-add-live-record', 'user_id' => $data['id']], ['data' => [
-                            'method' => 'post',
-                        ]]);
-                },
-                'visible' => !isset($_SESSION['selected_user']) ,
-                'contentOptions' => ['style' => 'width: 11.7%'],
-
+                ],
             ],
         ],
         'summary' => '',

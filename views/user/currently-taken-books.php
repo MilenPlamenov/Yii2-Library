@@ -58,7 +58,7 @@ $this->title = 'Currently taken books for ' . $user->email;
                 'label' => 'Return Part Of The Books',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Html::a(Html::encode('Return '. $data['book']['title']),
+                    return Html::a(Html::encode('Return amount'),
                         ['taken-books/part-time-return', 'taking_id' => $data['taking_id']]);
                 },
                 'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
@@ -67,7 +67,7 @@ $this->title = 'Currently taken books for ' . $user->email;
                 'label' => 'Return All Books',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return Html::a(Html::encode('Return all '. $data['book']['title']),
+                    return Html::a(Html::encode('Return all'),
                         ['taken-books/return', 'taking_id' => $data['taking_id']], ['data' => [
                             'method' => 'post',
                             'confirm' => 'Are you sure you want to return the books?',
@@ -87,7 +87,7 @@ $this->title = 'Currently taken books for ' . $user->email;
 </div>
 
 
-<div class="currently-taken-books-list d-flex container d-block d-sm-none">
+<div class="currently-taken-books-list d-block d-sm-none">
     <div class="row">
         <?= ListView::widget([
             'dataProvider' => $dataProvider,
