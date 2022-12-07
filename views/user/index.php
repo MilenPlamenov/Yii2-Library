@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /** @var yii\web\View $this */
 /** @var app\models\UserSearch $searchModel */
@@ -13,10 +14,10 @@ use yii\grid\GridView;
 
 $this->title = 'Users';
 ?>
-<div class="user-index">
+<h1><?= Html::encode($this->title) ?></h1>
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
+<div class="user-index d-none d-sm-block">
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <?= GridView::widget([
         'tableOptions' => [
@@ -78,3 +79,23 @@ $this->title = 'Users';
 
 
 </div>
+
+<div class="user-index-list d-flex container d-block d-sm-none">
+    <div class="row">
+        <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+
+        <?= ListView::widget([
+            'dataProvider' => $dataProvider,
+            'itemOptions' => ['class' => 'item'],
+            'summary' => '',
+            'itemView' => '_user_item',
+            'pager' => [
+                'linkContainerOptions' => ['class' => 'page-item'],
+                'linkOptions' => ['class' => 'page-link'],
+                'disabledPageCssClass' => ['class' => 'page-link'],
+                'options' => ['class' => 'pagination justify-content-center']
+            ],
+        ]) ?>
+    </div>
+</div>
+

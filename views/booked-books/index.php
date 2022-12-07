@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /** @var yii\web\View $this */
 /** @var app\models\BookedBooksSearch $searchModel */
@@ -12,10 +13,11 @@ use yii\grid\GridView;
 
 $this->title = 'Booked Books';
 ?>
-<div class="booked-books-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<h1><?= Html::encode($this->title) ?></h1>
 
+
+<div class="booked-books-index d-none d-sm-block">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -84,4 +86,21 @@ $this->title = 'Booked Books';
         }
     ?>
 
+</div>
+
+<div class="booked-books-index-list d-flex container d-block d-sm-none">
+    <div class="row">
+        <?= ListView::widget([
+            'dataProvider' => $dataProvider,
+            'itemOptions' => ['class' => 'item'],
+            'summary' => '',
+            'itemView' => '_booked_books_item',
+            'pager' => [
+                'linkContainerOptions' => ['class' => 'page-item'],
+                'linkOptions' => ['class' => 'page-link'],
+                'disabledPageCssClass' => ['class' => 'page-link'],
+                'options' => ['class' => 'pagination justify-content-center']
+            ],
+        ]) ?>
+    </div>
 </div>

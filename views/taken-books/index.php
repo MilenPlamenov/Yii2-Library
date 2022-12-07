@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /** @var yii\web\View $this */
 /** @var app\models\TakenBooksSearch $searchModel */
@@ -12,10 +13,9 @@ use yii\grid\GridView;
 
 $this->title = 'Taken Books History';
 ?>
+<h1 class="m-2"><?= Html::encode($this->title) ?></h1>
+
 <div class="taken-books-index d-none d-sm-block">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= GridView::widget([
         'tableOptions' => [
             'class' => 'table table-striped text-center',
@@ -23,25 +23,24 @@ $this->title = 'Taken Books History';
         'options' => [
             'class' => 'table-responsive',
         ],
-
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'rowOptions' => function ($model) {
             $date = new DateTime('now');
             $targetDate = new DateTime($model->date_for_return);
-            if ($date > $targetDate) {
+            if ($date > $targetDate and !$model->returned) {
                 return ['class' => 'border border-danger'];
             }
         },
         'columns' => [
             [
-                'label' => 'User F Name',
+                'label' => 'First Name',
                 'attribute' => 'first_name',
                 'value' => fn($data) => $data->user->first_name,
                 'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
-                'label' => 'User L Name',
+                'label' => 'Last Name',
                 'attribute' => 'last_name',
                 'value' => fn($data) => $data->user->last_name,
                 'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
@@ -53,7 +52,7 @@ $this->title = 'Taken Books History';
                 'value' => fn($data) => $data->book->title,
             ],
             [
-                'label' => 'Book ISBN',
+                'label' => 'ISBN',
                 'attribute' => 'isbn',
                 'value' => fn($data) => $data->book->isbn,
             ],
@@ -92,6 +91,22 @@ $this->title = 'Taken Books History';
             'options' => ['class' => 'pagination justify-content-center']
         ],
     ]); ?>
-
-
 </div>
+
+<div class="taken-books-index-list d-flex container d-block d-sm-none">
+    <div class="row">
+    <?= ListView::widget([
+        'dataProvider' => $dataProvider,
+        'itemOptions' => ['class' => 'item'],
+        'summary' => '',
+        'itemView' => '_taken_books_item',
+        'pager' => [
+            'linkContainerOptions' => ['class' => 'page-item'],
+            'linkOptions' => ['class' => 'page-link'],
+            'disabledPageCssClass' => ['class' => 'page-link'],
+            'options' => ['class' => 'pagination justify-content-center']
+        ],
+    ]) ?>
+    </div>
+</div>
+
