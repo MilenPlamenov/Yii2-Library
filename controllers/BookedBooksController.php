@@ -193,7 +193,7 @@ class BookedBooksController extends Controller
             if (!isset($_SESSION['cart'])) {
                 $_SESSION['cart'] = [];
             }
-            // not workin
+
             foreach ($booked_books as $key => $value){
                 $book = Book::find()->where(['id' => $value['attributes']['book_id']])->one();
                 $book->available_books += $value['attributes']['amount'];
