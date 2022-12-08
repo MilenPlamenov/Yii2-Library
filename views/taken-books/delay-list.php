@@ -143,7 +143,7 @@ $this->title = 'Delaying books';
     ]); ?>
 
 
-    <div class="amount-sort-list d-flex container d-block d-sm-none">
+    <div class="amount-sort-list container d-block d-sm-none">
         <div class="row">
             <?= ListView::widget([
                 'dataProvider' => $dataProviderAmount,

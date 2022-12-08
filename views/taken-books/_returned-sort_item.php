@@ -8,10 +8,11 @@ use yii\helpers\Url;
 
 <div class="card mb-3">
     <div class="card-body">
-        <h2 class="card-title">User: <?= Html::a($model->user->first_name, [
+        <h2 class="card-title fw-bold">User: <?= Html::a($model->user->first_name, [
                 Url::toRoute(['user/currently-taken-books', 'id' => $model->user->id])]) ?></h2>
         <h2>Email: <?= $model->user->email ?></h2>
-        <h4>Book: <?= $model->book->title ?> (<?= $model->book->isbn ?>)</h4>
+        <h4>Book: <?= $model->book->title ?></h4>
+        <h4>ISBN: <?= $model->book->isbn ?></h4>
         <h4>Amount: <?= $model->amount ?></h4>
         <h5>Status: <?= $model->returned ?
                 "<span class='text-success text-decoration-underline'>Returned</span>"
