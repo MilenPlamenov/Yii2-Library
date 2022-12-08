@@ -5,6 +5,7 @@ namespace app\models;
 use app\models\TakenBooks;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 
 
 /**
@@ -27,7 +28,7 @@ class TakenBooksSearch extends TakenBooks
     {
         return [
             [['taking_id', 'user_id', 'book_id', 'booked_books_id', 'amount', 'returned'], 'integer'],
-            [['taken_date', 'returned_date', 'date_for_return', 'title', 'author', 'isbn', 'first_name', 'last_name', 'email', 'telephone_number'], 'safe'],
+            [['taken_date', 'returned_date', 'date_for_return', 'title', 'author', 'isbn', 'first_name', 'last_name', 'email', 'telephone_number', 'total_amount'], 'safe'],
         ];
     }
 
@@ -40,6 +41,36 @@ class TakenBooksSearch extends TakenBooks
         return Model::scenarios();
     }
 
+    public function delayQuery($query, $delay, $expression){
+        if ($delay === 'amount') {
+            $query->select([
+                'total_amount' => $expression,
+                'user_id',
+            ])
+                ->addGroupBy('user_id')
+                ->addOrderBy(['total_amount' => SORT_DESC]);
+        } else{
+            $query
+                ->andWhere("date_for_return < NOW()");
+        }
+    }
+
+    public function setDataProvider($delay, $query) {
+        if ($delay !== null) {
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 200,
+                ],
+            ]);
+        } else {
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+
+            ]);
+        }
+        return $dataProvider;
+    }
     /**
      * Creates data provider instance with search query applied
      *
@@ -61,27 +92,12 @@ class TakenBooksSearch extends TakenBooks
         }
 
         if ($delay !== null) {
-            if ($delay === 'amount') {
-                $query->addOrderBy(['amount' => SORT_DESC]);
-            }
-            $query->andWhere("date_for_return < NOW()");
+            $exp = new Expression('SUM(amount)');
+            $this->delayQuery($query, $delay, $exp);
         }
 
         // add conditions that should always apply here
-
-        if ($delay !== null) {
-            $dataProvider = new ActiveDataProvider([
-                'query' => $query,
-                'pagination' => [
-                    'pageSize' => 200,
-                ],
-            ]);
-        } else {
-            $dataProvider = new ActiveDataProvider([
-                'query' => $query,
-
-            ]);
-        }
+        $dataProvider = $this->setDataProvider($delay, $query);
 
         $dataProvider->setSort([
             'defaultOrder' => ['date_for_return' => SORT_ASC],
@@ -130,7 +146,8 @@ class TakenBooksSearch extends TakenBooks
             ->andFilterWhere(['like', 'user.first_name', $this->first_name])
             ->andFilterWhere(['like', 'user.last_name', $this->last_name])
             ->andFilterWhere(['like', 'user.email', $this->email])
-            ->andFilterWhere(['like', 'user.telephone_number', $this->telephone_number]);
+            ->andFilterWhere(['like', 'user.telephone_number', $this->telephone_number])
+            ->andFilterWhere(['like', $exp, $this->total_amount]);
         return $dataProvider;
     }
 }

@@ -24,6 +24,7 @@ use Yii;
 class TakenBooks extends \yii\db\ActiveRecord
 {
     public $return_amount;
+    public $total_amount;
 
     /**
      * {@inheritdoc}

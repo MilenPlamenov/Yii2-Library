@@ -43,19 +43,16 @@ $this->title = 'Delaying books';
                 'value' => fn($data) => Html::a($data->user->first_name, [
                         Url::toRoute(['user/currently-taken-books', 'id' => $data->user->id])]
                 )
-                //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
                 'label' => 'Email',
                 'attribute' => 'email',
                 'value' => fn($data) => $data->user->email,
-                //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
                 'label' => 'Phone',
                 'attribute' => 'telephone_number',
                 'value' => fn($data) => $data->user->telephone_number,
-                //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
                 'label' => 'Book Title',
@@ -111,33 +108,18 @@ $this->title = 'Delaying books';
                 'value' => fn($data) => Html::a($data->user->first_name, [
                         Url::toRoute(['user/currently-taken-books', 'id' => $data->user->id])]
                 )
-                //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
                 'label' => 'Email',
                 'attribute' => 'email',
                 'value' => fn($data) => $data->user->email,
-                //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
             [
                 'label' => 'Phone',
                 'attribute' => 'telephone_number',
                 'value' => fn($data) => $data->user->telephone_number,
-                //'visible' => Yii::$app->user->identity->isAdminOrLibrarian(),
             ],
-            [
-                'label' => 'Book Title',
-                'attribute' => 'title',
-                'value' => fn($data) => $data->book->title,
-            ],
-            [
-                'label' => 'Date For Return',
-                'attribute' => 'date_for_return',
-            ],
-            [
-                'label' => 'Amount',
-                'attribute' => 'amount',
-            ],
+            'total_amount'
         ],
         'summary' => '',
     ]); ?>
